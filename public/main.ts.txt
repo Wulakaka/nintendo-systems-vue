@@ -1,0 +1,168 @@
+#
+# このコードは演出用の架空のコードです。
+#
+# @filename            {main.ts}
+# @searchRegExp        {(?<=\s)[A-Z]+(?=,)}
+# @searchRegExpOptions {g}
+# @branch              {feature/deploy*}
+# @charset             {UTF-8 LF}
+# @mode                {TypeScript}
+#
+/**
+ *
+ * Copyright (C) NINTENDO SYSTEMS ALL RIGHTS RESERVED.
+ *
+ * https://www.nintendo-systems.com/
+ *
+ */
+
+/////////////////////////////////////////////////
+
+enum Menu {
+  @link {#top    }// Nintendo Systems Top Page\n  TOP,
+  @link {#message}// Our Business\n  MESSAGE,
+  @link {#office }// Offices in Tokyo and Kyoto\n  OFFICE,
+  @link {#about  }// Company Overview\n  ABOUT,
+  @link {#recruit}// Mid-Career Recruitment\n  RECRUIT,
+}
+
+/////////////////////////////////////////////////
+
+class NintendoSystems
+  extends AbstractCompany
+  implements Pick<Nintendo, EngineeringTeam>, Pick<DeNA, EngineeringTeam>
+{
+  public readonly tokyoHeadquarters: Office = WeWork.getInstance().shibuya;
+  public readonly kyotoDevelopmentCenter: Office =
+    Nintendo.getInstance().developmentCenter;
+  public readonly originality: Originality = new Originality();
+  public readonly flexibility: Flexibility = new Flexibility();
+  private static instance: NintendoSystems;
+
+  private constructor() {
+    super('Nintendo Systems');
+    <#[[top]]    this.workers = new Workers(
+      ...Nintendo.getInstance().engineers,
+      ...DeNA.getInstance().engineers
+    );
+  }/><#[[message]]  public generateSystem(
+    evt: TechInnovationEvent,
+    trust: RelationshipOf<Trust>
+  ): Promise<System> {
+    return new Promise((resolve) => {
+      const handleMessage = ({ data }: WorkersEvent) => {
+        if (data.type !== MessageType.SYSTEM) {
+          return;
+        }
+
+        this.workers.removeEventListener('message', handleMessage);
+
+        resolve(new System(data.result));
+      };
+
+      this.workers.addEventListener('message', handleMessage);
+      this.workers.postMessage({
+        data: {
+          type: MessageType.SYSTEM,
+          trust,
+          discussion: new Discussion(
+            evt.innovations,
+            this.originality,
+            this.flexibility
+          ),
+        },
+      });
+    });
+  }
+  public generateInnovation(
+    evt: TechChangeEvent,
+    trust: RelationshipOf<Trust>
+  ): Promise<Innovation> {
+    return new Promise((resolve) => {
+      const handleMessage = ({ data }: WorkersEvent) => {
+        if (data.type !== MessageType.INNOVATION) {
+          return;
+        }
+
+        this.workers.removeEventListener('message', handleMessage);
+
+        resolve(
+          new Innovation(data.result, evt.drasticChanges, evt.complexity)
+        );
+      };
+
+      this.workers.addEventListener('message', handleMessage);
+      this.workers.postMessage({
+        data: {
+          type: MessageType.INNOVATION,
+          trust,
+          motivation: new Motivation(
+            Nintendo.getInstance().creativity,
+            DeNA.getInstance().expertise
+          ),
+        },
+      });
+    });
+  }
+  public makeSmile(customers: Customer[]): void {
+    customers.forEach(
+      (you) => (you.state = new Smile(Nintendo.getInstance().entertainments))
+    );
+  }/><#[[office]]  public override get offices(): Office[] {
+    return [this.tokyoHeadquarters, this.kyotoDevelopmentCenter];
+  }/><#[[about]]
+  public override get overview(): CorporateOverview {
+    return new CorporateOverview(
+      this.name,
+      this.description,
+      this.founded,
+      this.capital,
+      ...this.directors,
+      ...this.executiveOfficers,
+      ...this.offices
+    );
+  }/><#[[recruit]]  public override recruit(): URL {
+    if (world.now() < configs.ENTRY_START_DATE) {
+      return new URL(configs.URL_PRE_REGISTRATION);
+    } else {
+      return new URL(configs.URL_ENTRY);
+    }
+  }
+  public static getInstance(): NintendoSystems {
+    return (NintendoSystems.instance ||= new NintendoSystems());
+  }
+}
+
+/////////////////////////////////////////////////
+
+new Partnership(Nintendo.getInstance(), DeNA.getInstance())
+  .wait(new Years(7))
+  .then(main);
+
+function main(trust: RelationshipOf<Trust>) {
+  const nintendoSystems = NintendoSystems.getInstance();
+
+  world.add(nintendoSystems);
+
+  world.addEventListener(
+    Event.TECH_INNOVATION,
+    (evt: TechInnovationEvent) => {
+      world.systems.push(nintendoSystems.generateSystem(evt, trust));
+    },
+    {
+      capture: true,
+      passive: true,
+    }
+  );
+
+  world.addEventListener(
+    Event.INTERNET_TECH_CHANGE,
+    (evt: TechChangeEvent) => {
+      world.innovations.push(nintendoSystems.generateInnovation(evt, trust));
+    },
+    {
+      capture: true,
+      passive: true,
+    }
+  );
+}
