@@ -19,7 +19,7 @@ defineExpose({
 
 const view = ref()
 
-const t = ref(1)
+const t = ref(0)
 const stat = computed(() => {
   if (t.value === 0) {
     return 'empty'
@@ -47,9 +47,32 @@ function show(time: number) {
 }
 </script>
 <template>
-  <span ref="view" class="frag" :class="data.id" :data-stat="stat">{{ text }}</span>
+  <span ref="view" class="frag" :class="`frag--${data.id}`" :data-stat="stat">{{ text }}</span>
 </template>
 <style scoped lang="scss">
 .frag {
+  &--comment {
+    color: #88adff;
+  }
+  &--separator {
+    color: #2064ea;
+  }
+  &--keyword {
+    color: #2064ea;
+  }
+  &--indent {
+    position: relative;
+  }
+
+  &--indent::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    background-color: #2064ea;
+    content: '';
+    opacity: 0.05;
+  }
 }
 </style>

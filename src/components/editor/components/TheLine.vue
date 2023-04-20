@@ -25,7 +25,7 @@ const codeFragments = Code.parseFragmentDirective(code, { removeLineDirectives: 
 
 const children = ref<InstanceType<typeof TheFrag>[]>([])
 
-const t = ref(1)
+const t = ref(0)
 const stat = computed(() => {
   return t.value === 0 ? 'empty' : t.value === 1 ? 'complete' : 'typing'
 })
@@ -99,6 +99,7 @@ function show(_t: number) {
 </template>
 <style scoped lang="scss">
 li {
+  background: aliceblue;
   &[data-stat='empty'] {
     display: none;
   }
@@ -109,6 +110,12 @@ li {
     background-color: #e60012;
     content: ' ';
     animation: 1s linear infinite kf-blink;
+  }
+}
+
+@media (hover: hover) {
+  li:hover {
+    background-color: #e6e6e6;
   }
 }
 </style>

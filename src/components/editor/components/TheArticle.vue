@@ -4,14 +4,18 @@ import TheSection from '@/components/editor/components/TheSection.vue'
 import { onMounted, ref } from 'vue'
 import play from '@/utils/play'
 
+defineExpose({
+  show
+})
+
 const { fragments, getCode } = useCode()
 getCode()
 
-onMounted(() => {
-  setTimeout(() => {
-    play(show, 1e-4)
-  }, 1000)
-})
+// onMounted(() => {
+//   setTimeout(() => {
+//     play(show, 1e-4)
+//   }, 1000)
+// })
 
 const sectionMap = new Map()
 const children = ref<InstanceType<typeof TheSection>[]>([])
