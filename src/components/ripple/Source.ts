@@ -8,16 +8,19 @@ export default class Source {
   y: number
   r = 0
   edge = 10
-  constructor(x: number, y: number, edge = 10) {
+  speed: number
+  constructor(x: number, y: number, edge = 10, speed = 0.1) {
     this.x = x
     this.y = y
     this.edge = edge
+    this.speed = speed
     this.update()
   }
 
   update() {
     if (this.r <= this.edge) {
-      this.r += 0.5
+      // 半径变化速度
+      this.r += this.speed
       requestAnimationFrame(() => this.update())
     }
   }
@@ -27,7 +30,7 @@ export default class Source {
   }
 
   isPointInEdge(x: number, y: number) {
-    const min = Math.pow(this.r - 1, 2)
+    const min = this.r > 1 ? Math.pow(this.r - 1, 2) : 0
     const max = Math.pow(this.r, 2)
     const distance = Math.pow(x, 2) + Math.pow(y, 2)
     return min <= distance && distance <= max
