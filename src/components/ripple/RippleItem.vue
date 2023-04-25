@@ -3,13 +3,12 @@ import { computed, onMounted, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'click', position: { x: number; y: number }): void
-  (e: 'mounted', id: string): void
 }>()
 
 let reqId = -1
 
 defineExpose({
-  update(val) {
+  update(val: boolean) {
     active.value = val
     // cancelAnimationFrame(reqId)
     // reqId = requestAnimationFrame(() => {
@@ -27,7 +26,6 @@ const active = ref(false)
 onMounted(() => {
   y.value = view.value.offsetTop / view.value.offsetHeight
   x.value = view.value.offsetLeft / view.value.offsetWidth
-  emit('mounted', `${x.value},${y.value}`)
 })
 
 function handleClick() {

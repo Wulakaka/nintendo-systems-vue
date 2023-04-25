@@ -2,6 +2,7 @@
 import TheArticle from '@/components/editor/components/TheArticle.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
 import { ref } from 'vue'
+import TheRipple from '@/components/ripple/TheRipple.vue'
 
 const editor = ref()
 function handleScroll(scale: number) {
@@ -16,12 +17,19 @@ function handleScroll(scale: number) {
     </div>
     <ThePreview @scroll="handleScroll"></ThePreview>
   </div>
+  <TheRipple class="app__ripple"></TheRipple>
 </template>
 
 <style scoped lang="scss">
 .app {
   position: relative;
   height: 100vh;
+
+  &__ripple {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+  }
 }
 
 .editor {

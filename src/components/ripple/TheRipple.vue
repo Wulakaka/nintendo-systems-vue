@@ -3,15 +3,18 @@ import RippleItem from '@/components/ripple/RippleItem.vue'
 import { ref } from 'vue'
 import Source from '@/components/ripple/Source'
 
-const row = ref(40)
+const row = ref(50)
 
 let sources: Source[] = []
 
-const items = ref([])
+const items = ref<InstanceType<typeof RippleItem>[]>([])
 
+let reqId: number
 function handleClick({ x, y }: { x: number; y: number }) {
   sources.push(new Source(x, y, Math.round(row.value * Math.pow(2, 0.5))))
-  update()
+
+  cancelAnimationFrame(reqId)
+  reqId = requestAnimationFrame(update)
 }
 
 function update() {
@@ -26,31 +29,23 @@ function update() {
     return set
   }, new Set())
 
-  Object.entries(map).forEach(([key, value]) => {
+  items.value.forEach((i, index) => {
+    const x = index % row.value
+    const y = Math.floor(index / row.value)
+    const key = `${x},${y}`
     if (idSet.has(key)) {
-      value.update(true)
+      i.update(true)
       return
     }
-    value.update(false)
+    i.update(false)
   })
 
-  requestAnimationFrame(update)
-}
-const map = {}
-
-function handleMount(id: string, index: number) {
-  map[id] = items.value[index]
+  reqId = requestAnimationFrame(update)
 }
 </script>
 <template>
   <div class="ripple">
-    <RippleItem
-      v-for="(i, index) in row * row"
-      :key="index"
-      @click="handleClick"
-      ref="items"
-      @mounted="(id) => handleMount(id, index)"
-    ></RippleItem>
+    <RippleItem v-for="i in row * row" :key="i" @click="handleClick" ref="items"> </RippleItem>
   </div>
 </template>
 <style scoped lang="scss">
