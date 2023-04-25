@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import TheTop from '@/components/preview/components/TheTop.vue'
+import Callbacks from '@/models/Callbacks'
 
 const emit = defineEmits<{
   (e: 'scroll', scale: number): void
@@ -7,49 +9,88 @@ const emit = defineEmits<{
 
 const view = ref()
 
+let scale = 0
 let lastScale = 0
-
+let contentHeight = 0
+let viewportHeight = 0
 let invisibleHeight = 0
+let scrollTop = 0
 
+const handlerOption = {
+  capture: true,
+  passive: true
+}
+
+const _onScroll = new Callbacks()
 let reqId = -1
 onMounted(() => {
-  invisibleHeight = getInvisibleHeight(view.value)
+  addHandlers()
+  _onScroll.add(sectionTop.value.update)
 })
 
-function getInvisibleHeight(el: HTMLElement) {
-  const contentHeight = el.offsetHeight
-  const scrollHeight = el.scrollHeight
-  return scrollHeight - contentHeight
-}
+const sectionTop = ref()
 
-function getScale(el: HTMLElement, fn: (t: number) => void) {
-  cancelAnimationFrame(reqId)
-  const scrollTop = el.scrollTop
-  const newScale = scrollTop / invisibleHeight
-  const step = () => {
-    const diff = newScale - lastScale
-    if (Math.abs(diff) < 5e-4) {
-      lastScale = newScale
-      fn(lastScale)
-      cancelAnimationFrame(reqId)
-    } else {
-      lastScale += diff * 0.001
-      fn(lastScale)
-      reqId = requestAnimationFrame(step)
-    }
+defineExpose({
+  update,
+  forceDispatch() {
+    update()
   }
-  step()
+})
 
-  // reqId = requestAnimationFrame(step)
+function storePosition() {
+  const el = view.value
+  contentHeight = el.scrollHeight // 总高度
+  viewportHeight = el.offsetHeight // 可见高度
+  scrollTop = el.scrollTop // 卷起的高度
+  invisibleHeight = contentHeight - viewportHeight // 总不可见高度
+  scale = scrollTop / invisibleHeight // 当前位置的比例
 }
 
-function handleScroll() {
-  getScale(view.value, (t) => emit('scroll', t))
+function addHandlers() {
+  const el = view.value
+  el.removeEventListener('scroll', addHandlers, handlerOption)
+  el.addEventListener('scroll', storePosition, handlerOption)
+  window.removeEventListener('resize', addHandlers, handlerOption)
+  window.addEventListener('resize', storePosition, handlerOption)
+  storePosition()
+  reqId = requestAnimationFrame(update)
 }
+
+function update() {
+  const el = view.value
+  let delta = scale - lastScale
+  if (1e-5 > Math.abs(delta)) {
+    lastScale = scale
+    delta = 0
+    el.removeEventListener('scroll', storePosition, handlerOption)
+    el.addEventListener('scroll', addHandlers, handlerOption)
+    window.removeEventListener('resize', storePosition, handlerOption)
+    window.addEventListener('resize', addHandlers, handlerOption)
+    cancelAnimationFrame(reqId)
+  } else {
+    lastScale += 0.1 * delta
+    reqId = requestAnimationFrame(update)
+  }
+
+  _onScroll.exec({
+    value: lastScale,
+    valueInPx: lastScale * invisibleHeight,
+    valueInPxMax: invisibleHeight,
+    delta: delta,
+    contentHeight: contentHeight,
+    viewportHeight: viewportHeight
+  })
+}
+
+// function onScroll(fn) {
+//   _onScroll.add(fn)
+// }
 </script>
 <template>
-  <div ref="view" class="preview" @scroll="handleScroll">
-    <div class="preview__inner"></div>
+  <div ref="view" class="preview">
+    <div class="preview__inner">
+      <TheTop ref="sectionTop"></TheTop>
+    </div>
   </div>
 </template>
 <style scoped lang="scss">
@@ -64,6 +105,7 @@ function handleScroll() {
 
   &__inner {
     height: 1000px;
+    padding-top: 400px;
   }
 }
 </style>
