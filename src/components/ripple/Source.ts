@@ -17,7 +17,7 @@ export default class Source {
 
   update() {
     if (this.r <= this.edge) {
-      this.r += 0.2
+      this.r += 0.5
       requestAnimationFrame(() => this.update())
     }
   }

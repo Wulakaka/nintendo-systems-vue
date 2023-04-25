@@ -43,6 +43,19 @@ function handleClick() {
   outline: 1px solid red;
 }
 .active {
+  animation: 3s ease-in 1s 2 reverse both paused slidein;
   background: red;
+}
+</style>
+
+<style>
+@keyframes move {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 0.5;
+  }
 }
 </style>

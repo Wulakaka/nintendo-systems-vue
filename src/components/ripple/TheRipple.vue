@@ -3,7 +3,7 @@ import RippleItem from '@/components/ripple/RippleItem.vue'
 import { ref } from 'vue'
 import Source from '@/components/ripple/Source'
 
-const row = ref(50)
+const row = 20
 
 let sources: Source[] = []
 
@@ -11,7 +11,7 @@ const items = ref<InstanceType<typeof RippleItem>[]>([])
 
 let reqId: number
 function handleClick({ x, y }: { x: number; y: number }) {
-  sources.push(new Source(x, y, Math.round(row.value * Math.pow(2, 0.5))))
+  sources.push(new Source(x, y, Math.round(row * Math.pow(2, 0.5))))
 
   cancelAnimationFrame(reqId)
   reqId = requestAnimationFrame(update)
@@ -30,8 +30,8 @@ function update() {
   }, new Set())
 
   items.value.forEach((i, index) => {
-    const x = index % row.value
-    const y = Math.floor(index / row.value)
+    const x = index % row
+    const y = Math.floor(index / row)
     const key = `${x},${y}`
     if (idSet.has(key)) {
       i.update(true)
