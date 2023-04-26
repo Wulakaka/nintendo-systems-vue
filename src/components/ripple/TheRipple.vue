@@ -10,9 +10,9 @@ console.log(interpolatorColor(0.5))
 
 const row = 20
 
-let sources: Source[] = []
-
 const ts = ref(new Array(row * row).fill(0))
+
+let sources: Source[] = []
 
 let reqId: number
 function handleClick({ x, y }: { x: number; y: number }) {

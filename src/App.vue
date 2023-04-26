@@ -3,6 +3,7 @@ import TheArticle from '@/components/editor/components/TheArticle.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
 import { ref } from 'vue'
 import TheRipple from '@/components/ripple/TheRipple.vue'
+import RippleSvg from '@/components/ripple-svg/RippleSvg.vue'
 
 const editor = ref()
 function handleScroll(scale: number) {
@@ -17,7 +18,9 @@ function handleScroll(scale: number) {
     </div>
     <ThePreview @scroll="handleScroll"></ThePreview>
   </div>
-  <TheRipple class="app__ripple"></TheRipple>
+  <div class="app__ripple">
+    <RippleSvg></RippleSvg>
+  </div>
 </template>
 
 <style scoped lang="scss">
