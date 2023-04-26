@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 
 const view = ref()
 
-const count = 50
+const count = 100
 
 const containerSize = 1000
 
@@ -25,15 +25,12 @@ class Item {
   t: number
   posX: number
   posY: number
-  oldColor: string
-  newColor = ''
   constructor({ x, y, id, t }: { x: number; y: number; id: string; t: number }, size = 10) {
     this.x = x
     this.y = y
     this.id = id
     this.size = size
     this.t = t
-    this.oldColor = 'gray'
 
     this.posX = x * size + size / 2
     this.posY = y * size + size / 2
@@ -41,29 +38,19 @@ class Item {
 
   render(ctx: CanvasRenderingContext2D) {
     this.t = 0
-    this.update(1, ctx, 'aliceblue')
+    this.update(1, ctx)
   }
 
-  update(t: number, ctx: CanvasRenderingContext2D, color: string) {
+  update(t: number, ctx: CanvasRenderingContext2D) {
     if (t === this.t) return
-    const scale = 0.3 + Math.abs(t - 0.3)
+    const scale = getScale(t)
     const size = this.size * scale
 
-    if (t === 1) {
-      this.oldColor = this.newColor
-    }
-    if (t === 0) {
-      this.newColor = color
-    }
     ctx.clearRect(this.posX - this.size / 2, this.posY - this.size / 2, this.size, this.size)
-    ctx.fillStyle = this.getColor(t)
+    ctx.fillStyle = getColor(t)
     ctx.fillRect(this.posX - size / 2, this.posY - size / 2, size, size)
 
     this.t = t
-  }
-
-  getColor(t: number) {
-    return d3.interpolateRgb(this.oldColor, this.newColor)(t)
   }
 }
 
@@ -106,15 +93,13 @@ function handleClick(e: Event) {
   const x = Math.floor(e.offsetX / width)
   const y = Math.floor(e.offsetY / height)
 
-  sources.push(new Source(x, y, Math.round(count * Math.pow(2, 0.5)), speed))
-
-  const color = getColor(Math.random())
+  sources.push(new Source(x, y, Math.round(count * 2), speed))
 
   cancelAnimationFrame(reqId)
-  reqId = requestAnimationFrame(() => update(ctx, color))
+  reqId = requestAnimationFrame(() => update(ctx))
 }
 
-function update(ctx: CanvasRenderingContext2D, color: string) {
+function update(ctx: CanvasRenderingContext2D) {
   sources = sources.filter((s) => !s.isUseless)
   if (!sources.length) {
     return
@@ -134,15 +119,19 @@ function update(ctx: CanvasRenderingContext2D, color: string) {
     if (idSet.has(i.id)) {
       t = 0
     }
-    i.update(t, ctx, color)
+    i.update(t, ctx)
   })
 
-  reqId = requestAnimationFrame(() => update(ctx, color))
+  reqId = requestAnimationFrame(() => update(ctx))
 }
 
 function getColor(t: number) {
-  // return d3.interpolateHslLong('blue', 'red')(t)
-  return d3.interpolateHslLong('gray', 'aliceblue')(t)
+  return d3.interpolateHslLong('#ffb413', '#00f5ff')(t)
+  // return d3.interpolateHslLong('gray', 'aliceblue')(t)
+}
+
+function getScale(t: number) {
+  return Math.sin(t * 2 * Math.PI) * 0.4 + 0.6
 }
 </script>
 <template>
@@ -156,7 +145,7 @@ function getColor(t: number) {
 </template>
 <style scoped lang="scss">
 .ripple-canvas {
-  width: 800px;
-  height: 800px;
+  width: 1000px;
+  height: 1000px;
 }
 </style>

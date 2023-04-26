@@ -30,8 +30,8 @@ function handleScroll(scale: number) {
 
   &__ripple {
     position: absolute;
-    left: 100px;
-    top: 100px;
+    left: 0;
+    top: 0;
   }
 }
 
