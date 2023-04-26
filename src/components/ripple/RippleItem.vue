@@ -40,8 +40,9 @@ function handleClick() {
 </template>
 <style scoped lang="scss">
 .ripple-item {
-  background: red;
+  background: gray;
   transition: 16ms;
+  animation: 3s move ease-in infinite alternate;
 }
 </style>
 
@@ -49,12 +50,10 @@ function handleClick() {
 @keyframes move {
   0% {
     scale: 1;
-    background: #d2c73b;
   }
 
   100% {
-    scale: 0.1;
-    background: #d2c73b;
+    scale: 0.8;
   }
 }
 </style>
