@@ -5,9 +5,6 @@ import Source from '@/components/ripple/Source'
 import * as d3 from 'd3'
 const interpolatorTransform = d3.interpolateTransformCss('scale(1) rotate(1turn)', 'scale(0.5)')
 
-const interpolatorColor = d3.interpolateRgb('red', 'blue')
-console.log(interpolatorColor(0.5))
-
 const row = 20
 
 const ts = ref(new Array(row * row).fill(0))

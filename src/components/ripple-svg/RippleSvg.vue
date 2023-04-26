@@ -23,7 +23,6 @@ let sources: Source[] = []
 
 let reqId: number
 function handleClick({ x, y }: { x: number; y: number }) {
-  console.log(x, y)
   sources.push(new Source(x, y, Math.round(row * Math.pow(2, 0.5)), 0.2))
 
   cancelAnimationFrame(reqId)
@@ -60,7 +59,7 @@ function update() {
       v-for="i in items"
       :key="i.id"
       :data="i"
-      :size="10"
+      :size="50"
       @click="handleClick(i)"
     ></RippleSvgItem>
   </svg>
