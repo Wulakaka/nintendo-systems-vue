@@ -2,6 +2,11 @@
 import RippleItem from '@/components/ripple/RippleItem.vue'
 import { ref } from 'vue'
 import Source from '@/components/ripple/Source'
+import * as d3 from 'd3'
+const interpolatorTransform = d3.interpolateTransformCss('scale(1) rotate(1turn)', 'scale(0.5)')
+
+const interpolatorColor = d3.interpolateRgb('red', 'blue')
+console.log(interpolatorColor(0.5))
 
 const row = 20
 
@@ -49,7 +54,13 @@ function update() {
 </script>
 <template>
   <div class="ripple">
-    <RippleItem v-for="(i, index) in ts" :key="index" @click="handleClick" :t="i"></RippleItem>
+    <RippleItem
+      v-for="(i, index) in ts"
+      :key="index"
+      @click="handleClick"
+      :t="i"
+      :interpolator-transform="interpolatorTransform"
+    ></RippleItem>
   </div>
 </template>
 <style scoped lang="scss">

@@ -3,6 +3,7 @@ import { computed, onMounted, ref, toRef } from 'vue'
 
 const props = defineProps<{
   t: number
+  interpolatorTransform: (t: number) => string
 }>()
 
 const emit = defineEmits<{
@@ -16,10 +17,8 @@ const y = ref(0)
 const _t = toRef(props, 't')
 
 const style = computed(() => {
-  const scale = 0.3 + Math.abs(_t.value - 0.3)
   return {
-    transform: `scale(${scale})`,
-    opacity: scale
+    transform: props.interpolatorTransform(_t.value)
   }
 })
 
@@ -42,7 +41,7 @@ function handleClick() {
 .ripple-item {
   background: gray;
   transition: 16ms;
-  animation: 3s move ease-in infinite alternate;
+  animation: 4s move ease-in infinite alternate;
 }
 </style>
 
@@ -53,7 +52,7 @@ function handleClick() {
   }
 
   100% {
-    scale: 0.8;
+    scale: 0.9;
   }
 }
 </style>
