@@ -3,13 +3,11 @@ import RippleItem from '@/components/ripple/RippleItem.vue'
 import { ref } from 'vue'
 import Source from '@/components/ripple/Source'
 
-const row = 30
+const row = 20
 
 let sources: Source[] = []
 
-let iArr = new Array(row * row).fill(0)
-
-const items = ref<InstanceType<typeof RippleItem>[]>([])
+const ts = ref(new Array(row * row).fill(0))
 
 let reqId: number
 function handleClick({ x, y }: { x: number; y: number }) {
@@ -30,7 +28,7 @@ function update() {
     })
     return set
   }, new Set())
-  iArr = iArr.map((i, index) => {
+  ts.value = ts.value.map((i, index) => {
     if (i) {
       i -= 0.1
     }
@@ -46,16 +44,12 @@ function update() {
     return i
   })
 
-  items.value.forEach((i, index) => {
-    i.update(iArr[index])
-  })
-
   reqId = requestAnimationFrame(update)
 }
 </script>
 <template>
   <div class="ripple">
-    <RippleItem v-for="i in row * row" :key="i" @click="handleClick" ref="items"> </RippleItem>
+    <RippleItem v-for="(i, index) in ts" :key="index" @click="handleClick" :t="i"></RippleItem>
   </div>
 </template>
 <style scoped lang="scss">
