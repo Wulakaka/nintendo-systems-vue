@@ -9,6 +9,7 @@ export default class Source {
   r = 0
   edge = 10
   speed: number
+  shape: 'CIRCLE' | 'HEART' = Math.random() > 0.5 ? 'CIRCLE' : 'HEART'
   constructor(x: number, y: number, edge = 10, speed = 0.1) {
     this.x = x
     this.y = y
@@ -63,7 +64,10 @@ export default class Source {
   }
 
   getPoints() {
-    return this.getHeartPoints()
+    return {
+      CIRCLE: () => this.getCirclePoints(),
+      HEART: () => this.getHeartPoints()
+    }[this.shape]()
   }
 
   getCirclePoints() {
