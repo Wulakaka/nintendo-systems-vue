@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue'
 import Source from '@/components/ripple/Source'
 import * as d3 from 'd3'
-import drawHeart from '@/components/ripple-canvas/drawHeart'
 
 const view = ref()
 
@@ -89,7 +88,7 @@ function getItems(count: number): Item[] {
   })
 }
 
-function handleClick(e: Event) {
+function handleClick(e: PointerEvent) {
   const canvas = view.value
   const ctx = canvas.getContext('2d')
 
