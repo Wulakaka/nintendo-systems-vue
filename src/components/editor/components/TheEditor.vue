@@ -2,7 +2,8 @@
 import { useCode } from '@/components/editor/compositions/useCode'
 import TheSection from '@/components/editor/components/TheSection.vue'
 import { onMounted, ref } from 'vue'
-import play from '@/utils/play'
+import Play from '@/models/Play'
+import sectionShows from '@/components/editor/SectionShows'
 
 defineExpose({
   show
@@ -11,11 +12,13 @@ defineExpose({
 const { fragments, getCode } = useCode()
 getCode()
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     play(show, 1e-4)
-//   }, 1000)
-// })
+onMounted(() => {
+  setTimeout(() => {
+    new Play(4e3).start(({ t }) => {
+      sectionShows['default'](t)
+    })
+  }, 2000)
+})
 
 const sectionMap = new Map()
 const children = ref<InstanceType<typeof TheSection>[]>([])

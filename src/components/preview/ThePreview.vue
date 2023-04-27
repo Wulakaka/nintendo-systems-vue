@@ -7,10 +7,6 @@ import TheOffice from '@/components/preview/components/TheOffice.vue'
 import TheAbout from '@/components/preview/components/TheAbout.vue'
 import TheRecruit from '@/components/preview/components/TheRecruit.vue'
 
-const emit = defineEmits<{
-  (e: 'scroll', scale: number): void
-}>()
-
 const view = ref()
 
 let scale = 0

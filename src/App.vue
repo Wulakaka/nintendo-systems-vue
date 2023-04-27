@@ -1,22 +1,16 @@
 <script setup lang="ts">
-import TheArticle from '@/components/editor/components/TheArticle.vue'
+import TheEditor from '@/components/editor/components/TheEditor.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
-import { ref } from 'vue'
 
 import RippleCanvas2 from '@/components/ripple-canvas/RippleCanvas2.vue'
-
-const editor = ref()
-function handleScroll(scale: number) {
-  editor.value.show(scale)
-}
 </script>
 
 <template>
   <div class="app">
     <div class="editor">
-      <pre><TheArticle ref="editor"></TheArticle></pre>
+      <pre><TheEditor></TheEditor></pre>
     </div>
-    <ThePreview @scroll="handleScroll"></ThePreview>
+    <ThePreview></ThePreview>
   </div>
   <!--  <div class="app__ripple">
     <RippleCanvas2></RippleCanvas2>
