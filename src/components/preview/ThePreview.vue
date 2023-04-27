@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import TheTop from '@/components/preview/components/TheTop.vue'
-import Callbacks from '@/models/Callbacks'
 import TheMessage from '@/components/preview/components/TheMessage.vue'
 import TheOffice from '@/components/preview/components/TheOffice.vue'
 import TheAbout from '@/components/preview/components/TheAbout.vue'
 import TheRecruit from '@/components/preview/components/TheRecruit.vue'
+import { usePreviewScrollStore } from '@/stores/previewScroll'
 
 const view = ref()
 
@@ -21,21 +21,11 @@ const handlerOption = {
   passive: true
 }
 
-const _onScroll = new Callbacks()
 let reqId = -1
+
 onMounted(() => {
   addHandlers()
-  _onScroll.add(sectionTop.value.update)
-  _onScroll.add(sectionMessage.value.update)
-  _onScroll.add(sectionOffice.value.update)
-  _onScroll.add(sectionAbout.value.update)
 })
-
-const sectionTop = ref()
-const sectionMessage = ref()
-const sectionOffice = ref()
-const sectionAbout = ref()
-const sectionRecruit = ref()
 
 defineExpose({
   update,
@@ -64,6 +54,7 @@ function addHandlers() {
 }
 
 function update() {
+  const store = usePreviewScrollStore()
   const el = view.value
   let delta = scale - lastScale
   if (1e-5 > Math.abs(delta)) {
@@ -79,7 +70,7 @@ function update() {
     reqId = requestAnimationFrame(update)
   }
 
-  _onScroll.exec({
+  store.update({
     value: lastScale,
     valueInPx: lastScale * invisibleHeight,
     valueInPxMax: invisibleHeight,
@@ -88,19 +79,15 @@ function update() {
     viewportHeight: viewportHeight
   })
 }
-
-// function onScroll(fn) {
-//   _onScroll.add(fn)
-// }
 </script>
 <template>
   <div ref="view" class="preview">
     <div class="preview__inner">
-      <TheTop ref="sectionTop"></TheTop>
-      <TheMessage ref="sectionMessage"></TheMessage>
-      <TheOffice ref="sectionOffice"></TheOffice>
-      <TheAbout ref="sectionAbout"></TheAbout>
-      <TheRecruit ref="sectionRecruit"></TheRecruit>
+      <TheTop></TheTop>
+      <TheMessage></TheMessage>
+      <TheOffice></TheOffice>
+      <TheAbout></TheAbout>
+      <TheRecruit></TheRecruit>
     </div>
   </div>
 </template>

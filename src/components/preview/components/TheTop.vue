@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import useSection from '@/components/preview/compositions/useSection'
-import sectionShows from '@/components/editor/SectionShows'
 
 const view = ref()
-const { update, onScroll } = useSection(view)
-defineExpose({
-  update
-})
 
-onScroll((a) => {
-  sectionShows['top']?.(a.innerRate)
-})
+useSection(view, 'top')
 </script>
 <template>
   <section ref="view" class="top">top</section>

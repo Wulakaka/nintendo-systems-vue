@@ -1,11 +1,18 @@
-import Callbacks from '@/models/Callbacks'
-import type { PreviewScrollParams, SectionScrollParams } from '@/components/preview/types'
+import type { PreviewScrollParams } from '@/components/preview/types'
 import type { Ref } from 'vue'
+import { usePreviewScrollStore } from '@/stores/previewScroll'
+import { watchPostEffect } from 'vue'
+import { useSectionScrollStore } from '@/stores/sectionScroll'
 
-export default function useSection(view: Ref<HTMLElement>) {
-  const _scrollHandlers = new Callbacks<SectionScrollParams>()
+export default function useSection(view: Ref<HTMLElement>, id: string) {
+  const previewScrollStore = usePreviewScrollStore()
+  const sectionScrollStore = useSectionScrollStore()
+  watchPostEffect(() => {
+    update(previewScrollStore.info)
+  })
 
   function update(a: PreviewScrollParams) {
+    if (!view.value) return
     const globalRate = a.value
     const invisibleHeight = a.valueInPxMax
     let y = view.value.offsetTop
@@ -20,8 +27,8 @@ export default function useSection(view: Ref<HTMLElement>) {
     // 元素顶部到 viewport顶部 的距离/元素顶部不可见的最大距离
     const innerRate =
       (scrollTop - top) / ((bottom > invisibleHeight ? invisibleHeight : bottom) - top)
-    y -= viewportHeight
 
+    y -= viewportHeight
     const _bottom = y + height + viewportHeight
     y = 0 > y ? 0 : y
 
@@ -30,19 +37,14 @@ export default function useSection(view: Ref<HTMLElement>) {
     const outerRate =
       (scrollTop - y) / ((_bottom > invisibleHeight ? invisibleHeight : _bottom) - y)
 
-    _scrollHandlers.exec({
+    sectionScrollStore.update(id, {
       globalRate: globalRate,
       innerRate: 0 > innerRate ? 0 : 1 < innerRate ? 1 : innerRate, // 不可见区域的占比
       outerRate: 0 > outerRate ? 0 : 1 < outerRate ? 1 : outerRate
     })
   }
 
-  function onScroll(fn: (arg: SectionScrollParams) => void) {
-    _scrollHandlers.add(fn)
-  }
-
   return {
-    onScroll,
     update
   }
 }

@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import { useCode } from '@/components/editor/compositions/useCode'
 import TheSection from '@/components/editor/components/TheSection.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Play from '@/models/Play'
-import sectionShows from '@/components/editor/SectionShows'
-
-defineExpose({
-  show
-})
+import { useSectionScrollStore } from '@/stores/sectionScroll'
+import { usePreviewScrollStore } from '@/stores/previewScroll'
 
 const { fragments, getCode } = useCode()
 getCode()
 
+const view = ref()
+const sectionScrollStore = useSectionScrollStore()
+const previewScrollStore = usePreviewScrollStore()
+
+watch(
+  () => previewScrollStore.info,
+  () => {
+    view.value?.scrollTo({ top: view.value.scrollHeight, behavior: 'instant' })
+  },
+  {
+    flush: 'post'
+  }
+)
+
 onMounted(() => {
   setTimeout(() => {
     new Play(4e3).start(({ t }) => {
-      sectionShows['default'](t)
+      sectionScrollStore.update('default', { innerRate: t })
     })
   }, 2000)
 })
@@ -41,15 +52,25 @@ function show(t: number) {
 }
 </script>
 <template>
-  <ol>
-    <TheSection
-      v-for="(i, index) in fragments"
-      :data="i"
-      :key="i.id"
-      :id="i.id"
-      :index="index"
-      ref="children"
-    ></TheSection>
-  </ol>
+  <div class="editor" ref="view">
+    <ol>
+      <TheSection
+        v-for="(i, index) in fragments"
+        :data="i"
+        :key="i.id"
+        :index="index"
+        ref="children"
+      ></TheSection>
+    </ol>
+  </div>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.editor {
+  position: absolute;
+  max-height: 100vh;
+  width: 50vw;
+  overflow: auto;
+  color: #85aaf8;
+  white-space: pre;
+}
+</style>

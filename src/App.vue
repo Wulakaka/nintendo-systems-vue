@@ -7,9 +7,8 @@ import RippleCanvas2 from '@/components/ripple-canvas/RippleCanvas2.vue'
 
 <template>
   <div class="app">
-    <div class="editor">
-      <pre><TheEditor></TheEditor></pre>
-    </div>
+    <TheEditor></TheEditor>
+
     <ThePreview></ThePreview>
   </div>
   <!--  <div class="app__ripple">
@@ -27,13 +26,5 @@ import RippleCanvas2 from '@/components/ripple-canvas/RippleCanvas2.vue'
     left: 0;
     top: 0;
   }
-}
-
-.editor {
-  position: absolute;
-  max-height: 100vh;
-  width: 50vw;
-  overflow: auto;
-  color: #85aaf8;
 }
 </style>

@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import type { Fragment } from '@/components/editor/types'
-import { ref } from 'vue'
+import { ref, watchPostEffect } from 'vue'
 import Code from '@/models/Code'
 import TheLine from '@/components/editor/components/TheLine.vue'
-import sectionShows from '@/components/editor/SectionShows'
+import { useSectionScrollStore } from '@/stores/sectionScroll'
 
 const props = defineProps<{
   data: Fragment
   index: number
-  id: string
 }>()
-
-console.log(props.id)
 
 defineExpose({
   show,
@@ -23,8 +20,11 @@ defineExpose({
   }
 })
 
-sectionShows[props.id] = show
+const sectionScrollStore = useSectionScrollStore()
 
+watchPostEffect(() => {
+  show(sectionScrollStore.info[props.data.id]?.innerRate ?? 0)
+})
 const lines = Code.splitToLines(props.data.code)
 
 const children = ref<InstanceType<typeof TheLine>[]>([])
