@@ -3,11 +3,15 @@ import type { Fragment } from '@/components/editor/types'
 import { ref } from 'vue'
 import Code from '@/models/Code'
 import TheLine from '@/components/editor/components/TheLine.vue'
+import sectionShows from '@/components/editor/SectionShows'
 
 const props = defineProps<{
   data: Fragment
   index: number
+  id: string
 }>()
+
+console.log(props.id)
 
 defineExpose({
   show,
@@ -18,6 +22,8 @@ defineExpose({
     return props.index
   }
 })
+
+sectionShows[props.id] = show
 
 const lines = Code.splitToLines(props.data.code)
 

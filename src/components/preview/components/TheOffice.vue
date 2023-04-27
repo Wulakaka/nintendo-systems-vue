@@ -10,15 +10,15 @@ defineExpose({
 })
 
 onScroll((a) => {
-  sectionShows['top']?.(a.innerRate)
+  sectionShows['office']?.(a.innerRate)
 })
 </script>
 <template>
-  <section ref="view" class="top">top</section>
+  <section ref="view" class="office">office</section>
 </template>
 <style scoped lang="scss">
-section.top {
-  height: 100px;
-  background: rgba(#85aaf8, 0.5);
+section.office {
+  height: 300px;
+  background: rgba(#85aaf8, 0.7);
 }
 </style>

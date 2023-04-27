@@ -2,6 +2,10 @@
 import { onMounted, ref } from 'vue'
 import TheTop from '@/components/preview/components/TheTop.vue'
 import Callbacks from '@/models/Callbacks'
+import TheMessage from '@/components/preview/components/TheMessage.vue'
+import TheOffice from '@/components/preview/components/TheOffice.vue'
+import TheAbout from '@/components/preview/components/TheAbout.vue'
+import TheRecruit from '@/components/preview/components/TheRecruit.vue'
 
 const emit = defineEmits<{
   (e: 'scroll', scale: number): void
@@ -26,9 +30,16 @@ let reqId = -1
 onMounted(() => {
   addHandlers()
   _onScroll.add(sectionTop.value.update)
+  _onScroll.add(sectionMessage.value.update)
+  _onScroll.add(sectionOffice.value.update)
+  _onScroll.add(sectionAbout.value.update)
 })
 
 const sectionTop = ref()
+const sectionMessage = ref()
+const sectionOffice = ref()
+const sectionAbout = ref()
+const sectionRecruit = ref()
 
 defineExpose({
   update,
@@ -90,6 +101,10 @@ function update() {
   <div ref="view" class="preview">
     <div class="preview__inner">
       <TheTop ref="sectionTop"></TheTop>
+      <TheMessage ref="sectionMessage"></TheMessage>
+      <TheOffice ref="sectionOffice"></TheOffice>
+      <TheAbout ref="sectionAbout"></TheAbout>
+      <TheRecruit ref="sectionRecruit"></TheRecruit>
     </div>
   </div>
 </template>
@@ -102,10 +117,5 @@ function update() {
   right: 10px;
   top: 10px;
   background: beige;
-
-  &__inner {
-    height: 1000px;
-    padding-top: 400px;
-  }
 }
 </style>

@@ -10,15 +10,15 @@ defineExpose({
 })
 
 onScroll((a) => {
-  sectionShows['top']?.(a.innerRate)
+  sectionShows['about']?.(a.innerRate)
 })
 </script>
 <template>
-  <section ref="view" class="top">top</section>
+  <section ref="view" class="about">about</section>
 </template>
 <style scoped lang="scss">
-section.top {
-  height: 100px;
+section.about {
+  height: 200px;
   background: rgba(#85aaf8, 0.5);
 }
 </style>

@@ -18,9 +18,9 @@ function handleScroll(scale: number) {
     </div>
     <ThePreview @scroll="handleScroll"></ThePreview>
   </div>
-  <div class="app__ripple">
+  <!--  <div class="app__ripple">
     <RippleCanvas2></RippleCanvas2>
-  </div>
+  </div>-->
 </template>
 
 <style scoped lang="scss">

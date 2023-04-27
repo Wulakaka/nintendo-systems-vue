@@ -43,6 +43,7 @@ function show(t: number) {
       v-for="(i, index) in fragments"
       :data="i"
       :key="i.id"
+      :id="i.id"
       :index="index"
       ref="children"
     ></TheSection>
