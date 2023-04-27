@@ -63,6 +63,10 @@ export default class Source {
   }
 
   getPoints() {
+    return this.getHeartPoints()
+  }
+
+  getCirclePoints() {
     const arr = []
     const { leftTop, rightBottom } = this.getRange()
     arr.push(...this.getPointsInRange(leftTop, rightBottom))
@@ -109,6 +113,30 @@ export default class Source {
       )
     )
 
+    return arr
+  }
+
+  getHeartPoints() {
+    const getX = (t: number) => {
+      const x = 160 * Math.pow(Math.sin(t), 3)
+      return x / 350
+    }
+
+    const getY = (t: number) => {
+      const y =
+        130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
+      return -y / 350
+    }
+
+    const arr = []
+    let t = -Math.PI
+    while (t < Math.PI) {
+      t += 0.5 / this.r
+
+      const x = Math.round(getX(t) * this.r)
+      const y = Math.round(getY(t) * this.r)
+      arr.push(`${x + this.x},${y + this.y}`)
+    }
     return arr
   }
 }

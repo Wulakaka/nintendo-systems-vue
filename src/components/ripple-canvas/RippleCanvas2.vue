@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import Source from '@/components/ripple/Source'
 import * as d3 from 'd3'
+import drawHeart from '@/components/ripple-canvas/drawHeart'
 
 const view = ref()
 
@@ -43,14 +44,18 @@ class Item {
 
   update(t: number, ctx: CanvasRenderingContext2D) {
     if (t === this.t) return
+
     const scale = getScale(t)
     const size = this.size * scale
-
     ctx.clearRect(this.posX - this.size / 2, this.posY - this.size / 2, this.size, this.size)
+    this.draw(t, ctx, size)
+    // drawHeart(ctx, size, { x: this.posX, y: this.posY })
+    this.t = t
+  }
+
+  draw(t: number, ctx: CanvasRenderingContext2D, size: number) {
     ctx.fillStyle = getColor(t)
     ctx.fillRect(this.posX - size / 2, this.posY - size / 2, size, size)
-
-    this.t = t
   }
 }
 

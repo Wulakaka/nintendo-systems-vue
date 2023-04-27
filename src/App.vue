@@ -3,7 +3,7 @@ import TheArticle from '@/components/editor/components/TheArticle.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
 import { ref } from 'vue'
 
-import RippleCanvas2 from '@/components/RippleCanvas2.vue'
+import RippleCanvas2 from '@/components/ripple-canvas/RippleCanvas2.vue'
 
 const editor = ref()
 function handleScroll(scale: number) {
