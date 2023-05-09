@@ -82,7 +82,7 @@ function getNumbers(r: number) {
 <template>
   <div class="h-full flex flex-col justify-center">
     <div
-      class="outer w-[356px] h-[356px] from-slate-700 to-white rounded-full mx-auto p-[9px] shadow-md transition-[background]"
+      class="w-[356px] h-[356px] from-slate-700 to-white rounded-full mx-auto p-[9px] shadow-md transition-[background]"
       :style="{ backgroundImage: gradient }"
     >
       <div class="w-[338px] h-[338px] rounded-full p-[2px] backdrop-contrast-150">
@@ -115,13 +115,13 @@ function getNumbers(r: number) {
               {{ i.number }}
             </li>
             <li
-              class="minute h-[12.5rem] w-1 bg-[#192734] absolute -left-0.5 -top-[155px] origin-[center_155px] transition-transform"
+              class="shadow-[inset_2px_1px_0_#435059] h-[12.5rem] w-1 bg-[#192734] absolute -left-0.5 -top-[155px] origin-[center_155px] transition-transform"
               :style="{
                 transform: `rotate(${minuteRotate}deg)`
               }"
             ></li>
             <li
-              class="dot w-4 h-4 rounded-full bg-[#192734] -translate-x-1/2 -translate-y-1/2"
+              class="shadow-[inset_-2px_1px_0_#435059] w-4 h-4 rounded-full bg-[#192734] -translate-x-1/2 -translate-y-1/2"
             ></li>
           </ul>
         </div>
@@ -130,14 +130,4 @@ function getNumbers(r: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
-.outer {
-}
-
-.dot {
-  box-shadow: inset -2px 1px 0 #435059;
-}
-.minute {
-  box-shadow: inset 2px 2px 0 #435059;
-}
-</style>
+<style scoped lang="scss"></style>
