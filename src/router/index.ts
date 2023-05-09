@@ -21,6 +21,11 @@ const router = createRouter({
       path: '/clock',
       name: 'clock',
       component: () => import('../views/clock/TheClock.vue')
+    },
+    {
+      path: '/ripple',
+      name: 'ripple',
+      component: () => import('../views/ripple/RippleCanvas2.vue')
     }
   ]
 })

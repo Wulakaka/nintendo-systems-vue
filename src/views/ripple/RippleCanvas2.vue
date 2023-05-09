@@ -130,7 +130,7 @@ function update(ctx: CanvasRenderingContext2D) {
 }
 
 function getColor(t: number) {
-  return d3.interpolateHslLong('#ffb413', '#00f5ff')(t)
+  return d3.interpolateHslLong('#e02ad7', '#584aff')(t)
   // return d3.interpolateHslLong('gray', 'aliceblue')(t)
 }
 

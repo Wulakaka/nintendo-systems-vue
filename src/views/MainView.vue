@@ -2,7 +2,6 @@
 import TheEditor from '@/components/editor/components/TheEditor.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
 
-import RippleCanvas2 from '@/components/ripple-canvas/RippleCanvas2.vue'
 import TheLoading from '@/components/loading/TheLoading.vue'
 import { onMounted, ref } from 'vue'
 import LoadingParallel from '@/models/LoadingParallel'
@@ -27,9 +26,6 @@ onMounted(() => {
     <ThePreview></ThePreview>
   </div>
   <TheLoading ref="refLoading"></TheLoading>
-  <!--  <div class="app__ripple">
-    <RippleCanvas2></RippleCanvas2>
-  </div>-->
 </template>
 main
 
