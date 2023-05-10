@@ -26,6 +26,11 @@ const router = createRouter({
       path: '/ripple',
       name: 'ripple',
       component: () => import('../views/ripple/RippleCanvas2.vue')
+    },
+    {
+      path: '/navigation',
+      name: 'navigation',
+      component: () => import('../views/navigation/TheNavigation.vue')
     }
   ]
 })
