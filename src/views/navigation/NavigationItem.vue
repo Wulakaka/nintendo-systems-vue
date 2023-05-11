@@ -24,39 +24,51 @@ const a = computed(() => {
 const x1 = computed(() => r * Math.sin(a.value))
 const y1 = computed(() => r * Math.cos(a.value) + centerY.value)
 
-const x2 = computed(
-  () =>
+const x2 = computed(() => {
+  return (
     centerY.value / Math.tan(a.value) +
     r * (Math.cos(a.value) / Math.tan(a.value) + Math.sin(a.value))
-)
-
-const dl = computed(() => {
-  if (x1.value > 0) return `M -100,0 Q ${x2.value},0 ${x1.value},${y1.value} v ${-y1.value} z`
-  return `M -100,0 Q ${x2.value},0 ${x1.value},${y1.value} z`
-})
-const dr = computed(() => {
-  if (x1.value > 0) return `M 100,0 Q ${-x2.value},0 ${-x1.value},${y1.value} v ${-y1.value} z`
-  return `M 100,0 Q ${-x2.value},0 ${-x1.value},${y1.value} z`
+  )
 })
 
 const d = computed(
   () =>
-    `M -100,0 Q ${x2.value},0 ${x1.value},${y1.value} L ${-x1.value},${
+    `M -100,0 L ${x1.value},${y1.value} L ${-x1.value},${
       y1.value
-    } Q ${-x2.value},0 100,0 V 100 H -200 Z`
+    } Q ${-x2.value},0 100,0 L -100,0 z`
 )
+
+// 使用剪切，只绘制左侧曲线
+const clipD = computed(
+  () =>
+    `M -100,0 Q ${x2.value},0 ${x1.value},${y1.value} L ${-x1.value},${y1.value} L 100,0 L -100,0 z`
+)
+
+const id = 'path' + ((Math.random() * 100) & 1) + performance.now()
 
 const pause = ref(false)
 
-function step() {
-  const delta = 8e-3
-  if (!pause.value) {
-    t.value -= delta
-  } else {
+let isGoingDown = true
+function update() {
+  const delta = 4e-3
+  if (isGoingDown) {
     t.value += delta
+  } else {
+    t.value -= delta
   }
+  if (t.value > 1) {
+    isGoingDown = false
+    t.value = 1
+  } else if (t.value < 0) {
+    isGoingDown = true
+    t.value = 0
+  }
+}
 
-  t.value = t.value < 0 ? 0 : t.value > 1 ? 1 : t.value
+function step() {
+  if (!pause.value) {
+    update()
+  }
 
   requestAnimationFrame(step)
 }
@@ -71,14 +83,17 @@ step()
     @mouseover="pause = true"
     @mouseleave="pause = false"
   >
-    <!--    <rect width="200" height="200" x="-100" y="-100" fill="aliceblue"></rect>-->
-    <path :d="d" fill="aliceblue" fill-rule="evenodd"></path>
+    <clipPath :id="id">
+      <path :d="clipD"></path>
+    </clipPath>
+    <path :d="d" fill="aliceblue" fill-rule="evenodd" :clip-path="`url(#${id})`"></path>
+    <rect width="200" height="100" x="-100" y="0" fill="aliceblue"></rect>
     <circle :r="r" cx="0" :cy="centerY" fill="aliceblue"></circle>
 
-    <g fill="white">
+    <!--    <g fill="white" stroke="red">
       <path :d="dl"></path>
       <path :d="dr"></path>
-    </g>
+    </g>-->
     <!--    <g fill="aliceblue">
           <rect width="200" height="100" x="-100" y="0"></rect>
           <circle :r="r" cx="0" :cy="centerY"></circle>
