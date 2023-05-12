@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed, Ref, ref, watchEffect } from 'vue'
+import { computed, Ref, ref, watch, watchEffect } from 'vue'
 import * as d3 from 'd3'
 import { getB, getIntersectionPoint, getKB } from '@/views/navigation/utils'
 
-const t = ref(0.6)
+const t = ref(0)
 
 const R = 100
 const r = 50
+const dr = 15
+const offsetY = 40
 
-const { cX1, cY1, XTangentPoint, dL, dR, x1, y1, x0, y0 } = useBubble(t, R, r, 20)
+const { cX1, cY1, dL } = useBubble2(t, R, r, dr, offsetY)
 
 const id = 'path' + ((Math.random() * 100) & 1) + performance.now()
 
@@ -16,7 +18,7 @@ const pause = ref(false)
 
 let isGoingDown = true
 function update() {
-  const delta = 1e-3
+  const delta = 4e-3
   if (isGoingDown) {
     t.value += delta
   } else {
@@ -40,6 +42,7 @@ function step() {
 }
 step()
 
+// 贝塞尔曲线的方式，但是无法处理两圆离开后的问题
 function useBubble(t: Ref<number>, R: number, r: number, offsetY: number) {
   // 大圆圆心
   const cX0 = 0
@@ -143,25 +146,108 @@ function useBubble(t: Ref<number>, R: number, r: number, offsetY: number) {
     y1
   }
 }
+
+/** 使用公切圆
+ *
+ * @param t
+ * @param R
+ * @param r
+ * @param dr 制作弧形的圆半径
+ * @param offsetY 最大偏移距离
+ *
+ */
+function useBubble2(t: Ref<number>, R: number, r: number, dr: number, offsetY: number) {
+  // 大圆圆心
+  const cX0 = 0
+  const cY0 = 0
+  // 小圆圆心X
+  const cX1 = 0
+  // 小圆圆心Y
+  const cY1 = computed(() => {
+    const min = R - r
+    const max = R + r + offsetY
+    return min + (max - min) * t.value
+  })
+  // 公切圆圆心Y
+  const cYD = computed(() => {
+    const ys = cY1.value
+    return (Math.pow(R + dr, 2) - Math.pow(r + dr, 2) + Math.pow(ys, 2)) / (2 * ys)
+  })
+  // 公切圆圆心X
+  const cXD = computed(() => Math.pow(Math.pow(R + dr, 2) - Math.pow(cYD.value, 2), 1 / 2))
+
+  // 两个公切圆的交点，靠近大圆一侧
+  const y0 = computed(() => {
+    if (cXD.value > dr) return 0
+    return cYD.value - Math.pow(Math.pow(dr, 2) - Math.pow(cXD.value, 2), 1 / 2)
+  })
+  // 两个公切圆的交点，靠近小圆一侧
+  const y1 = computed(() => {
+    if (cXD.value > dr) return 0
+    return cYD.value + Math.pow(Math.pow(dr, 2) - Math.pow(cXD.value, 2), 1 / 2)
+  })
+
+  // 大圆上的公切点X
+  const tX0 = computed(() => (cXD.value * R) / (R + dr))
+  // 大圆上的公切点Y
+  const tY0 = computed(() => (cYD.value * R) / (R + dr))
+
+  // 小圆上的公切点X
+  const tX1 = computed(() => (cXD.value * r) / (r + dr))
+  // 小圆上的公切点Y
+  const tY1 = computed(() => {
+    const { k, b } = getKB(cX1, cY1.value, cXD.value, cYD.value)
+    return k * tX1.value + b
+  })
+
+  const dL = computed(() => {
+    if (!cXD.value) return ''
+    if (cXD.value > dr || cY1.value < R) {
+      return `M ${tX1.value},${tY1.value} A ${dr} ${dr} 0 0 1 ${tX0.value},${
+        tY0.value
+      } H ${-tX0.value} A ${dr} ${dr} 0 0 1 ${-tX1.value},${tY1.value}  z`
+    } else {
+      const up = `M 0,${y1.value} A ${dr} ${dr} 0 0 0 ${tX1.value},${
+        tY1.value
+      } A ${r} ${r} 0 0 0 ${-tX1.value},${tY1.value} A ${dr} ${dr} 0 0 0 0,${y1.value}`
+
+      const down = `M 0,${y0.value} A ${dr} ${dr} 0 0 1 ${tX0.value},${
+        tY0.value
+      } A ${R} ${R} 0 0 1 ${-tX0.value},${tY0.value} A ${dr} ${dr} 0 0 1 0,${y0.value}`
+      return `${up} ${down} Z`
+    }
+  })
+
+  return {
+    cXD,
+    cYD,
+    cX1,
+    cY1,
+    dL,
+    tX1,
+    tY1
+  }
+}
 </script>
 
 <template>
   <svg
-    viewBox="-200 -200 400 400"
+    viewBox="-300 -300 600 600"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     @mouseover="pause = true"
     @mouseleave="pause = false"
   >
-    <circle cx="0" cy="0" :r="R" fill="aliceblue" stroke-width="1" stroke="black"></circle>
-    <circle :cx="cX1" :cy="cY1" :r="r" fill="aliceblue" stroke-width="1" stroke="black"></circle>
+    <circle cx="0" cy="0" :r="R" fill="aliceblue"></circle>
 
-    <!--    <path :d="dL" fill="aliceblue"></path>-->
-    <!--    <path :d="dR" fill="aliceblue"></path>-->
-    <circle :cx="XTangentPoint.x" :cy="XTangentPoint.y" r="1" fill="blue"></circle>
-    <circle :cx="x0" :cy="y0" r="1" fill="green"></circle>
-    <circle :cx="x1" :cy="y1" r="1" fill="red"></circle>
-    <line :x1="x1" :y1="y1" :x2="cX1" :y2="cY1" stroke="black"></line>
+    <g fill="aliceblue">
+      <circle :cx="cX1" :cy="cY1" :r="r"></circle>
+      <path :d="dL"></path>
+    </g>
+    <g fill="aliceblue" style="transform: rotate(90deg)">
+      <circle :cx="cX1" :cy="cY1" :r="r"></circle>
+      <path :d="dL"></path>
+    </g>
   </svg>
 </template>
 
