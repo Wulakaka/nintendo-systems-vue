@@ -5,7 +5,7 @@ import Bubble from '@/views/navigation/Bubble'
 import NavRoundInnerItem from '@/views/navigation/NavRoundInnerItem.vue'
 
 const R = 100
-const dr = 15
+const dr = 10
 const interval = 300
 const length = 20
 
