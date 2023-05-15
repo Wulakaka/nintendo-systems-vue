@@ -23,7 +23,7 @@ export default function useBubbleWithCircle(
   const cX1 = 0
   // 小圆圆心Y
   const cY1 = computed(() => {
-    const min = R - r
+    const min = 0
     const max = R + r + offset
     return min + (max - min) * t.value
   })
@@ -64,7 +64,9 @@ export default function useBubbleWithCircle(
     if (cXD.value > dr || cY1.value < R) {
       return `M ${tX1.value},${tY1.value} A ${dr} ${dr} 0 0 1 ${tX0.value},${
         tY0.value
-      } H ${-tX0.value} A ${dr} ${dr} 0 0 1 ${-tX1.value},${tY1.value}  z`
+      } A ${R} ${R} 0 0 1 ${-tX0.value},${tY0.value} A ${dr} ${dr} 0 0 1 ${-tX1.value},${
+        tY1.value
+      } A ${r} ${r} 0 0 1 ${tX1.value},${tY1.value} Z`
     } else {
       const up = `M 0,${y1.value} A ${dr} ${dr} 0 0 0 ${tX1.value},${
         tY1.value
