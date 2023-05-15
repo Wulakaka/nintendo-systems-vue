@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
-import useBubbleWithCircle from '@/views/navigation/useBubbleWithCircle'
+import useBubbleOut from '@/views/navigation/useBubbleOut'
 
 const props = defineProps<{
   t: number
@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const { t, outerR, r, dr, offset, rotate } = toRefs(props)
 
-const { d, cX1, cY1 } = useBubbleWithCircle(t, outerR.value, r.value, dr.value, offset.value)
+const { d, cX1, cY1 } = useBubbleOut(t, outerR.value, r.value, dr.value, offset.value)
 </script>
 
 <template>

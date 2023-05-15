@@ -31,6 +31,11 @@ const router = createRouter({
       path: '/navigation',
       name: 'navigation',
       component: () => import('../views/navigation/TheNavigation.vue')
+    },
+    {
+      path: '/bubble',
+      name: 'bubble',
+      component: () => import('../views/bubbles/index.vue')
     }
   ]
 })

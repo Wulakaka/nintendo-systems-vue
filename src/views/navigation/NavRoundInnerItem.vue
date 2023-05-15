@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
-import useBubbleWithCircleInner from '@/views/navigation/useBubbleWithCircleInner'
+import useBubbleIn from '@/views/navigation/useBubbleIn'
 
 const props = defineProps<{
   t: number
@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const { t, outerR, r, dr, offset, rotate } = toRefs(props)
 
-const { d, cX1, cY1 } = useBubbleWithCircleInner(t, outerR.value, r.value, dr.value, offset.value)
+const { d, cX1, cY1 } = useBubbleIn(t, outerR.value, r.value, dr.value, offset.value)
 </script>
 
 <template>
