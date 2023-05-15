@@ -3,20 +3,30 @@ import TheEditor from '@/components/editor/components/TheEditor.vue'
 import ThePreview from '@/components/preview/ThePreview.vue'
 
 import TheLoading from '@/components/loading/TheLoading.vue'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import LoadingParallel from '@/models/LoadingParallel'
 import chain from '@/utils/chain'
 
 const refLoading = ref()
+const loading = ref(false)
 
 onMounted(() => {
   const p = LoadingParallel.getInstance()
-  chain(
-    () => refLoading.value.show(),
-    () => {
-      return p.start(refLoading.value.update, 1e3)
-    }
-  )
+  loading.value = true
+  setTimeout(() => {
+    chain(
+      () => refLoading.value.show(),
+      () => {
+        return p.start(refLoading.value.update, 1e3).then(function () {
+          return refLoading.value.hide()
+        })
+      },
+      () => {
+        loading.value = false
+        return nextTick()
+      }
+    )
+  }, 1000)
 })
 </script>
 
@@ -25,19 +35,31 @@ onMounted(() => {
     <TheEditor></TheEditor>
     <ThePreview></ThePreview>
   </div>
-  <TheLoading ref="refLoading"></TheLoading>
+  <Transition name="hide">
+    <TheLoading ref="refLoading" v-show="loading"></TheLoading>
+  </Transition>
 </template>
-main
 
 <style scoped lang="scss">
 .main {
   position: relative;
   height: 100vh;
+}
+.hide {
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+  }
+  &-enter-to,
+  &-leave-from {
+    opacity: 1;
+  }
+  &-enter-active {
+    transition: opacity ease-out 0.5s;
+  }
 
-  &__ripple {
-    position: absolute;
-    left: 0;
-    top: 0;
+  &-leave-active {
+    transition: opacity ease-out 0.5s;
   }
 }
 </style>
