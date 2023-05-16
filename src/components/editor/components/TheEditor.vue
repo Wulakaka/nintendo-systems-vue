@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { useCode } from '@/components/editor/compositions/useCode'
 import TheSection from '@/components/editor/components/TheSection.vue'
-import { onMounted, ref, watch } from 'vue'
-import Play from '@/models/Play'
-import { useSectionScrollStore } from '@/stores/sectionScroll'
+import { ref, watch } from 'vue'
 import { usePreviewScrollStore } from '@/stores/previewScroll'
 
 const { fragments, getCode } = useCode()
 getCode()
 
 const view = ref()
-const sectionScrollStore = useSectionScrollStore()
 const previewScrollStore = usePreviewScrollStore()
 
 watch(
@@ -22,14 +19,6 @@ watch(
     flush: 'post'
   }
 )
-
-onMounted(() => {
-  setTimeout(() => {
-    new Play(4e3).start(({ t }) => {
-      sectionScrollStore.update('default', { innerRate: t })
-    })
-  }, 2000)
-})
 
 const sectionMap = new Map()
 const children = ref<InstanceType<typeof TheSection>[]>([])

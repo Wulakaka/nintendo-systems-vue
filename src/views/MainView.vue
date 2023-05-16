@@ -6,6 +6,10 @@ import TheLoading from '@/components/loading/TheLoading.vue'
 import { nextTick, onMounted, ref } from 'vue'
 import LoadingParallel from '@/models/LoadingParallel'
 import chain from '@/utils/chain'
+import Play from '@/models/Play'
+import { useSectionScrollStore } from '@/stores/sectionScroll'
+
+const sectionScrollStore = useSectionScrollStore()
 
 const refLoading = ref()
 const loading = ref(false)
@@ -15,15 +19,29 @@ onMounted(() => {
   loading.value = true
   setTimeout(() => {
     chain(
-      () => refLoading.value.show(),
+      () =>
+        chain(
+          () => refLoading.value.show(),
+          () => {
+            return p
+              .start((t) => {
+                // 在promise列表中加入loading 的promise
+                refLoading.value.update(t)
+              }, 1e3)
+              .then(function () {
+                return refLoading.value.hide()
+              })
+          },
+          () => {
+            loading.value = false
+            return nextTick()
+          }
+        ),
       () => {
-        return p.start(refLoading.value.update, 1e3).then(function () {
-          return refLoading.value.hide()
+        new Play(4e3).start(({ t }) => {
+          sectionScrollStore.update('default', { innerRate: t })
         })
-      },
-      () => {
-        loading.value = false
-        return nextTick()
+        return Promise.resolve()
       }
     )
   }, 1000)
