@@ -7,7 +7,7 @@ export function useCode() {
 
   async function getCode() {
     const instance = Code.getInstance()
-    await instance.getData('/main.ts.txt')
+    await instance.getData('./main.ts.txt')
     fragments.value = instance.parseFragmentDirective()
   }
 
