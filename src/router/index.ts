@@ -41,6 +41,11 @@ const router = createRouter({
       path: '/tick',
       name: 'tick',
       component: () => import('../views/tick/TheTick.vue')
+    },
+    {
+      path: '/icon',
+      name: 'icon',
+      component: () => import('../views/icon/index.vue')
     }
   ]
 })
