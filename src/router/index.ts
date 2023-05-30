@@ -36,6 +36,11 @@ const router = createRouter({
       path: '/bubble',
       name: 'bubble',
       component: () => import('../views/bubbles/index.vue')
+    },
+    {
+      path: '/tick',
+      name: 'tick',
+      component: () => import('../views/tick/TheTick.vue')
     }
   ]
 })
