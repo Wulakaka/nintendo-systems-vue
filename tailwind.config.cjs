@@ -46,6 +46,22 @@ module.exports = {
             transform: 'translateX(-25rem)',
             opacity: '0'
           }
+        },
+        circle :{
+          from: {
+            transform: 'rotate(0)'
+          },
+          to:{
+            transform: 'rotate(360deg)'
+          }
+        },
+        z: {
+          from:{
+            transform: 'translateZ(var(--from))'
+          },
+          to:{
+            transform: 'translateZ(var(--to))'
+          }
         }
       }
     }

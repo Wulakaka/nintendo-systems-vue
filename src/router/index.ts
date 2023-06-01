@@ -46,6 +46,11 @@ const router = createRouter({
       path: '/icon',
       name: 'icon',
       component: () => import('../views/icon/index.vue')
+    },
+    {
+      path: '/card',
+      name: 'card',
+      component: () => import('@/views/card/index.vue')
     }
   ]
 })
