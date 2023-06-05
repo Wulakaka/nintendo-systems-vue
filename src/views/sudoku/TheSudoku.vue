@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive } from 'vue'
 
 type Value = number
 type Row = Value[]
@@ -17,29 +17,27 @@ const list: List = [
   [9, 0, 0, 8, 0, 4, 1, 0, 0]
 ]
 
-const result = ref<number[][]>([])
+const result = reactive<(string | number)[][]>(list.map((i) => i.map((j) => (j ? j : ''))))
 
-function main(list: List) {
+function main() {
+  const tasks = []
   const copy = list.map((i) => [...i])
 
   let i = 0,
     j = 0
 
   function isValid(i: number, j: number, list: List) {
-    let flag = true
     // 判断每一行
     {
       if (!isNine(list[i])) {
-        flag = false
-        return flag
+        return false
       }
     }
     // 判断每一列
     {
       const col = list.map((row) => row[j]) as Row
       if (!isNine(col)) {
-        flag = false
-        return flag
+        return false
       }
     }
     // 判断每个九宫格
@@ -57,12 +55,11 @@ function main(list: List) {
       temp.push(list[3 * x + 2][3 * y + 1])
       temp.push(list[3 * x + 2][3 * y + 2])
       if (!isNine(temp)) {
-        flag = false
-        return flag
+        return false
       }
     }
 
-    return flag
+    return true
   }
 
   function next() {
@@ -84,11 +81,24 @@ function main(list: List) {
     }
   }
 
+  function render(i: number, j: number, val: number | string) {
+    result[i][j] = val
+  }
+
   while (i < 9 && j < 9) {
     if (list[i][j]) {
       next()
     } else {
       copy[i][j]++
+      // 存储快照
+      {
+        const val = copy[i][j] > 9 ? '' : copy[i][j]
+        const _i = i
+        const _j = j
+        tasks.push(() => {
+          render(_i, _j, val)
+        })
+      }
       if (copy[i][j] > 9) {
         copy[i][j] = 0
         prev()
@@ -97,9 +107,23 @@ function main(list: List) {
       }
     }
   }
-  return copy
+
+  console.log('[tasks]', tasks.length)
+
+  tasks.reduce((p, fn) => {
+    return p.then(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            fn()
+            resolve(void 0)
+          })
+        })
+    )
+  }, Promise.resolve())
 }
-result.value = main(list)
+
+main()
 
 function isNine(arr: Row) {
   const map = new Array(10).fill(0)
@@ -115,14 +139,15 @@ function isNine(arr: Row) {
 </script>
 
 <template>
-  <table class="w-[600px] h-[600px]">
-    <tr class="[&:nth-child(3n):not(:last-child)]:border-b-4" v-for="i in result" :key="i">
+  <table>
+    <tr class="group" v-for="(item, i) in result" :key="i">
       <td
-        class="border-b-2 border-r-2 border-r-slate-200 [&:nth-child(3n):not(:last-child)]:border-r-4 text-center"
-        v-for="j in i"
+        :data-problem="!!list[i][j]"
+        class="border-b-2 border-r-2 border-slate-300 [&:nth-child(3n):not(:last-child)]:border-r-4 group-[&:nth-child(3n):not(:last-child)]:border-b-4 text-center w-[50px] h-[50px] data-problem:bg-slate-200 text-slate-900 data-problem:text-slate-700"
+        v-for="(cell, j) in item"
         :key="j"
       >
-        {{ j }}
+        {{ cell }}
       </td>
     </tr>
   </table>

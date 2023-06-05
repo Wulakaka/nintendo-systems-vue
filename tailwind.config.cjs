@@ -2,6 +2,9 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
+    data:{
+      problem: 'problem="true"'
+    },
     extend: {
       animation: {
         tick: 'move 10s linear var(--delay) infinite, 10s bigger ease-in-out var(--delay) infinite'
