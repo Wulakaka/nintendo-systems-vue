@@ -51,6 +51,11 @@ const router = createRouter({
       path: '/card',
       name: 'card',
       component: () => import('@/views/card/index.vue')
+    },
+    {
+      path: '/sudoku',
+      name: 'sudoku',
+      component: () => import('@/views/sudoku/TheSudoku.vue')
     }
   ]
 })
