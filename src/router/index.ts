@@ -56,6 +56,11 @@ const router = createRouter({
       path: '/sudoku',
       name: 'sudoku',
       component: () => import('@/views/sudoku/TheSudoku.vue')
+    },
+    {
+      path: '/paint',
+      name: 'paint',
+      component: () => import('@/views/paint/ThePaint.vue')
     }
   ]
 })
