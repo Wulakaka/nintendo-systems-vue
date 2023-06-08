@@ -1,5 +1,5 @@
 import DrawShape from '@/views/paint/DrawShape'
-export default class DrawCircle extends DrawShape {
+export default class DrawEllipse extends DrawShape {
   mousemoveHandler(e: MouseEvent) {
     this.endX = e.offsetX
     this.endY = e.offsetY
@@ -14,6 +14,6 @@ export default class DrawCircle extends DrawShape {
     const radiusX = maxX - x
     const radiusY = maxY - y
 
-    this.paint.drawCircle(x, y, radiusX, radiusY)
+    this.paint.drawEllipse(x, y, radiusX, radiusY)
   }
 }

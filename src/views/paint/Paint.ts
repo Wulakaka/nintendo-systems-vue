@@ -1,6 +1,7 @@
 import Stack from '@/views/paint/Stack'
 
 export default class Paint {
+  // 存储操作的栈
   imageDataStack = new Stack<ImageData>()
   cover: { x: number; y: number; width: number; height: number } | null = null
   canvas?: HTMLCanvasElement
@@ -66,7 +67,7 @@ export default class Paint {
     }
   }
 
-  drawCircle(x: number, y: number, radiusX: number, radiusY: number, lineWidth = 4) {
+  drawEllipse(x: number, y: number, radiusX: number, radiusY: number, lineWidth = 4) {
     if (!this.canvas) return
     if (!this.ctx) return
 
