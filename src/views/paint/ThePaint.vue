@@ -5,13 +5,12 @@ import img from '@/assets/spiderman.jpg'
 import Paint from '@/views/paint/Paint'
 import loadImage from '@/views/paint/loadImage'
 import DrawCircle from '@/views/paint/DrawCircle'
-
-// 加载图片
-// 每次渲染完再存储
+import DrawRect from '@/views/paint/DrawRect'
 
 const canvas = ref()
 const paint = new Paint()
 const drawCircle = new DrawCircle(paint)
+const drawRect = new DrawRect(paint)
 function keydownHandler(e: KeyboardEvent) {
   if (e.key === 'z') {
     paint.revoke()
@@ -28,8 +27,11 @@ onMounted(async () => {
   paint.setBackground(bg)
 
   // 开启绘制圆形功能
-  drawCircle.el = ele
-  drawCircle.addListeners()
+  // drawCircle.el = ele
+  // drawCircle.addListeners()
+  // 开启绘制矩形功能
+  drawRect.el = ele
+  drawRect.addListeners()
 
   // 撤销功能
   document.addEventListener('keydown', keydownHandler)

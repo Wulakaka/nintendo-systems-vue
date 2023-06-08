@@ -95,4 +95,39 @@ export default class Paint {
       height: radiusY * 2 + lineWidth
     }
   }
+
+  // 绘制矩形
+  drawRect(x: number, y: number, width: number, height: number, lineWidth = 4) {
+    if (!this.canvas) return
+    if (!this.ctx) return
+
+    this.ctx.save()
+    const imgData = this.imageDataStack.last
+    const lastCover = this.cover
+    if (imgData && lastCover) {
+      this.ctx.putImageData(
+        imgData,
+        0,
+        0,
+        lastCover.x,
+        lastCover.y,
+        lastCover.width,
+        lastCover.height
+      )
+    }
+
+    this.ctx.beginPath()
+    this.ctx.lineWidth = lineWidth
+    this.ctx.strokeStyle = 'green'
+    this.ctx.rect(x, y, width, height)
+    this.ctx.stroke()
+    this.ctx.closePath()
+    this.ctx.restore()
+    this.cover = {
+      x: x - lineWidth / 2,
+      y: y - lineWidth / 2,
+      width: width + lineWidth,
+      height: height + lineWidth
+    }
+  }
 }
