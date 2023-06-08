@@ -4,12 +4,16 @@ import Paint from '@/views/paint/Paint'
 import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
 import DrawArrow from '@/views/paint/DrawArrow'
+import TextCover from '@/views/paint/TextCover.vue'
 
 const canvas = ref()
 const paint = new Paint()
 const drawEllipse = new DrawEllipse(paint)
 const drawRect = new DrawRect(paint)
 const drawArrow = new DrawArrow(paint)
+
+const isActivateText = ref(false)
+
 function keydownHandler(e: KeyboardEvent) {
   if (e.key === 'z') {
     paint.revoke()
@@ -44,6 +48,7 @@ function loadBg(bg: HTMLImageElement) {
 }
 
 function activateDrawing(type: 'rect' | 'ellipse' | 'arrow' | 'text' | null) {
+  isActivateText.value = false
   removeAllListeners()
   switch (type) {
     case 'rect':
@@ -56,6 +61,7 @@ function activateDrawing(type: 'rect' | 'ellipse' | 'arrow' | 'text' | null) {
       drawArrow.addListeners()
       break
     case 'text':
+      isActivateText.value = true
       break
     default:
   }
@@ -70,6 +76,7 @@ defineExpose({
 <template>
   <div class="flex relative">
     <canvas ref="canvas"></canvas>
+    <TextCover v-show="isActivateText"></TextCover>
   </div>
 </template>
 
