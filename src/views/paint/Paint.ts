@@ -48,25 +48,9 @@ export default class Paint {
     }
   }
 
-  // drawImg(
-  //   img: HTMLImageElement,
-  //   sx = 0,
-  //   sy = 0,
-  //   sWidth = img.width,
-  //   sHeight = img.height,
-  //   dx = 0,
-  //   dy = 0,
-  //   dWidth = img.width,
-  //   dHeight = img.height
-  // ) {
-  //   this.ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  // }
-
-  drawCircle(x: number, y: number, radiusX: number, radiusY: number, lineWidth = 4) {
-    if (!this.canvas) return
+  // 恢复上一次绘制过的图像区域
+  private repairCover() {
     if (!this.ctx) return
-
-    this.ctx.save()
     const imgData = this.imageDataStack.last
     const lastCover = this.cover
     if (imgData && lastCover) {
@@ -80,6 +64,14 @@ export default class Paint {
         lastCover.height
       )
     }
+  }
+
+  drawCircle(x: number, y: number, radiusX: number, radiusY: number, lineWidth = 4) {
+    if (!this.canvas) return
+    if (!this.ctx) return
+
+    this.ctx.save()
+    this.repairCover()
 
     this.ctx.beginPath()
     this.ctx.lineWidth = lineWidth
@@ -97,28 +89,16 @@ export default class Paint {
   }
 
   // 绘制矩形
-  drawRect(x: number, y: number, width: number, height: number, lineWidth = 4) {
+  drawRect(x: number, y: number, width: number, height: number, lineWidth = 4, color = 'red') {
     if (!this.canvas) return
     if (!this.ctx) return
 
     this.ctx.save()
-    const imgData = this.imageDataStack.last
-    const lastCover = this.cover
-    if (imgData && lastCover) {
-      this.ctx.putImageData(
-        imgData,
-        0,
-        0,
-        lastCover.x,
-        lastCover.y,
-        lastCover.width,
-        lastCover.height
-      )
-    }
+    this.repairCover()
 
     this.ctx.beginPath()
     this.ctx.lineWidth = lineWidth
-    this.ctx.strokeStyle = 'green'
+    this.ctx.strokeStyle = color
     this.ctx.rect(x, y, width, height)
     this.ctx.stroke()
     this.ctx.closePath()
@@ -128,6 +108,66 @@ export default class Paint {
       y: y - lineWidth / 2,
       width: width + lineWidth,
       height: height + lineWidth
+    }
+  }
+
+  // 绘制箭头
+  drawArrow(startX: number, startY: number, endX: number, endY: number, size = 20, color = 'red') {
+    if (!this.canvas) return
+    if (!this.ctx) return
+
+    const theta = Math.atan2(endY - startY, endX - startX)
+
+    this.ctx.save()
+    this.repairCover()
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(startX, startY)
+
+    this.ctx.translate(endX, endY)
+    this.ctx.rotate(theta)
+
+    const drawHead = (size: number) => {
+      const angle = Math.PI - Math.PI / 8
+      const x1 = size * Math.cos(angle)
+      const y1 = size * Math.sin(angle)
+
+      const angle2 = Math.PI / 8
+      const x2 = x1 + y1 * Math.tan(angle2)
+      const y2 = 0
+
+      const x3 = x1
+      const y3 = -y1
+
+      const x4 = (x1 + x2) / 2
+      const y4 = (y1 + y2) / 2
+
+      const x5 = x4
+      const y5 = -y4
+
+      // 4-->1-->(0,0)-->3-->5
+
+      this.ctx?.lineTo(x4, y4)
+      this.ctx?.lineTo(x1, y1)
+      this.ctx?.lineTo(0, 0)
+      this.ctx?.lineTo(x3, y3)
+      this.ctx?.lineTo(x5, y5)
+      this.ctx?.closePath()
+    }
+    drawHead(size)
+    this.ctx.fillStyle = color
+    this.ctx.fill()
+    this.ctx.restore()
+    const minX = Math.min(startX, endX)
+    const maxX = Math.max(startX, endX)
+    const minY = Math.min(startY, endY)
+    const maxY = Math.max(startY, endY)
+
+    this.cover = {
+      x: minX - size,
+      y: minY - size,
+      width: maxX - minX + size * 2,
+      height: maxY - minY + size * 2
     }
   }
 }

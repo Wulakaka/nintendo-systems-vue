@@ -6,11 +6,13 @@ import Paint from '@/views/paint/Paint'
 import loadImage from '@/views/paint/loadImage'
 import DrawCircle from '@/views/paint/DrawCircle'
 import DrawRect from '@/views/paint/DrawRect'
+import DrawArrow from '@/views/paint/DrawArrow'
 
 const canvas = ref()
 const paint = new Paint()
 const drawCircle = new DrawCircle(paint)
 const drawRect = new DrawRect(paint)
+const drawArrow = new DrawArrow(paint)
 function keydownHandler(e: KeyboardEvent) {
   if (e.key === 'z') {
     paint.revoke()
@@ -30,8 +32,11 @@ onMounted(async () => {
   // drawCircle.el = ele
   // drawCircle.addListeners()
   // 开启绘制矩形功能
-  drawRect.el = ele
-  drawRect.addListeners()
+  // drawRect.el = ele
+  // drawRect.addListeners()
+  // 开启绘制箭头功能
+  drawArrow.el = ele
+  drawArrow.addListeners()
 
   // 撤销功能
   document.addEventListener('keydown', keydownHandler)
@@ -39,6 +44,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   drawCircle.removeListeners()
+  drawRect.removeListeners()
+  drawArrow.removeListeners()
   document.removeEventListener('keydown', keydownHandler)
 })
 </script>
