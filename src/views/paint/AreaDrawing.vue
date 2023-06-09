@@ -5,6 +5,7 @@ import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
 import DrawArrow from '@/views/paint/DrawArrow'
 import TextCover from '@/views/paint/TextCover.vue'
+import type { TextItem } from '@/views/paint/AttachText'
 
 const canvas = ref()
 const paint = new Paint()
@@ -67,6 +68,12 @@ function activateDrawing(type: 'rect' | 'ellipse' | 'arrow' | 'text' | null) {
   }
 }
 
+function handleDrawText(list: TextItem[]) {
+  list.forEach(({ text, size, x, y, color }) => {
+    paint.fillText(text, size, x, y, color)
+  })
+}
+
 defineExpose({
   loadBg,
   activateDrawing
@@ -76,7 +83,7 @@ defineExpose({
 <template>
   <div class="flex relative">
     <canvas ref="canvas"></canvas>
-    <TextCover v-show="isActivateText"></TextCover>
+    <TextCover v-if="isActivateText" @draw-text="handleDrawText"></TextCover>
   </div>
 </template>
 

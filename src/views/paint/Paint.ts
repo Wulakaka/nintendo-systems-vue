@@ -147,7 +147,6 @@ export default class Paint {
       const y5 = -y4
 
       // 4-->1-->(0,0)-->3-->5
-
       this.ctx?.lineTo(x4, y4)
       this.ctx?.lineTo(x1, y1)
       this.ctx?.lineTo(0, 0)
@@ -170,5 +169,29 @@ export default class Paint {
       width: maxX - minX + size * 2,
       height: maxY - minY + size * 2
     }
+  }
+
+  fillText(text: string, size: number, x: number, y: number, color: string) {
+    if (!this.canvas) return
+    if (!this.ctx) return
+    this.ctx.save()
+
+    this.ctx.fillStyle = color
+    this.ctx.textBaseline = 'top'
+    this.ctx.font = `${size}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`
+
+    // 手动调整了高度，可能不同的size需要调整的不一样
+    y = y - size / 2 + 1
+    this.ctx.fillText(text, x, y)
+
+    const t = this.ctx.measureText(text)
+    this.cover = {
+      x,
+      y,
+      width: t.width,
+      height: size
+    }
+    this.ctx.restore()
+    this.store()
   }
 }

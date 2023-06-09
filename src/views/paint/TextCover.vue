@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { onBeforeUnmount, reactive, ref } from 'vue'
 import type { TextItem } from '@/views/paint/AttachText'
 import TextCoverItem from '@/views/paint/TextCoverItem.vue'
 
+const emit = defineEmits<{
+  (e: 'drawText', val: TextItem[]): void
+}>()
+
 const list = reactive<TextItem[]>([])
 
-const isFocusItem = ref(false)
+const hasActiveItem = ref(false)
 
 function add({ x, y }: { x: number; y: number }) {
   list.push({
     x,
     y,
     text: '',
-    size: 12,
+    size: 20,
     color: 'red'
   })
 }
 
-function handleClick(e: MouseEvent) {
-  console.log(isFocusItem.value)
-  if (isFocusItem.value) return
+function handleMouseDown(e: MouseEvent) {
+  if (hasActiveItem.value) return
   add({
     x: e.offsetX,
     y: e.offsetY
   })
 }
 
-function handleFocusItem() {
-  console.log('focus')
-  isFocusItem.value = true
+function handleActivateItem() {
+  hasActiveItem.value = true
 }
 
-function handleBlurItem() {
-  setTimeout(() => {
-    isFocusItem.value = false
-  }, 100)
+function handleDeactivateItem() {
+  hasActiveItem.value = false
 }
 
 function handleRemove(data: TextItem) {
@@ -43,16 +43,20 @@ function handleRemove(data: TextItem) {
     list.splice(index, 1)
   }
 }
+
+onBeforeUnmount(() => {
+  emit('drawText', list)
+})
 </script>
 
 <template>
-  <div class="absolute w-full h-full left-0 top-0" @mousedown.self="handleClick">
+  <div class="absolute w-full h-full left-0 top-0" @mousedown.self="handleMouseDown">
     <TextCoverItem
       v-for="i in list"
       :data="i"
       :key="i"
-      @focus="handleFocusItem"
-      @blur="handleBlurItem"
+      @activate="handleActivateItem"
+      @deactivate="handleDeactivateItem"
       @remove="handleRemove(i)"
     ></TextCoverItem>
   </div>
