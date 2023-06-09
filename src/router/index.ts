@@ -61,6 +61,11 @@ const router = createRouter({
       path: '/paint',
       name: 'paint',
       component: () => import('@/views/paint/ThePaint.vue')
+    },
+    {
+      path: '/frame',
+      name: 'frame',
+      component: () => import('@/views/frame/FrameView.vue')
     }
   ]
 })
