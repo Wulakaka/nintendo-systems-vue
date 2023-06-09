@@ -15,12 +15,24 @@ onMounted(async () => {
 function handleActivate(type: 'rect' | 'ellipse' | 'arrow' | 'text') {
   drawing.value.activateDrawing(type)
 }
+
+function handleDownload() {
+  drawing.value.download()
+}
+
+function handleConfirm() {
+  drawing.value.copy()
+}
 </script>
 
 <template>
   <div>
     <AreaDrawing ref="drawing"></AreaDrawing>
-    <AreaOperating @activate="handleActivate"></AreaOperating>
+    <AreaOperating
+      @activate="handleActivate"
+      @download="handleDownload"
+      @confirm="handleConfirm"
+    ></AreaOperating>
   </div>
 </template>
 

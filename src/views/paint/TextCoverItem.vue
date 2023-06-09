@@ -109,7 +109,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="absolute p-1 outline outline-black hover:outline-red-600 hover:outline-dashed focus:outline-red-600 focus:outline-none focus:outline-solid data-[editable=false]:cursor-move data-[editable=false]:select-none -translate-y-1/2 -translate-x-1 font-mono"
+    class="absolute p-1 outline outline-transparent hover:outline-red-600 hover:outline-dashed focus:outline-red-600 focus:outline-none focus:outline-solid data-[editable=false]:cursor-move data-[editable=false]:select-none -translate-y-1/2 -translate-x-1 font-mono"
     :contenteditable="editable"
     :data-editable="editable"
     ref="el"

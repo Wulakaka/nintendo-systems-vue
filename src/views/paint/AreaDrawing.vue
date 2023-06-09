@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Paint from '@/views/paint/Paint'
 import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
@@ -49,8 +49,7 @@ function loadBg(bg: HTMLImageElement) {
 }
 
 function activateDrawing(type: 'rect' | 'ellipse' | 'arrow' | 'text' | null) {
-  isActivateText.value = false
-  removeAllListeners()
+  deactivateDrawing()
   switch (type) {
     case 'rect':
       drawRect.addListeners()
@@ -68,15 +67,44 @@ function activateDrawing(type: 'rect' | 'ellipse' | 'arrow' | 'text' | null) {
   }
 }
 
+function deactivateDrawing() {
+  isActivateText.value = false
+  removeAllListeners()
+}
+
 function handleDrawText(list: TextItem[]) {
   list.forEach(({ text, size, x, y, color }) => {
     paint.fillText(text, size, x, y, color)
   })
 }
 
+async function download() {
+  deactivateDrawing()
+  await nextTick()
+  const a = document.createElement('a')
+  const blob = await paint.toBlob()
+  a.href = URL.createObjectURL(blob)
+  a.download = '截图'
+  a.click()
+}
+
+async function copy() {
+  deactivateDrawing()
+  await nextTick()
+  const blob = await paint.toBlob()
+  const data = [
+    new ClipboardItem({
+      [blob.type]: blob
+    })
+  ]
+  await navigator.clipboard.write(data)
+}
+
 defineExpose({
   loadBg,
-  activateDrawing
+  activateDrawing,
+  download,
+  copy
 })
 </script>
 

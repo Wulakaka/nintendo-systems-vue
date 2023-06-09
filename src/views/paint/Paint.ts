@@ -15,8 +15,6 @@ export default class Paint {
   store() {
     if (!this.canvas) return
     if (!this.ctx) return
-    // const dataURL = this.canvas.toDataURL()
-    // this.imageDataStack.push(dataURL)
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
     this.imageDataStack.push(imageData)
   }
@@ -66,8 +64,15 @@ export default class Paint {
       )
     }
   }
-
-  drawEllipse(x: number, y: number, radiusX: number, radiusY: number, lineWidth = 4) {
+  // 绘制椭圆
+  drawEllipse(
+    x: number,
+    y: number,
+    radiusX: number,
+    radiusY: number,
+    lineWidth = 4,
+    color = 'red'
+  ) {
     if (!this.canvas) return
     if (!this.ctx) return
 
@@ -76,7 +81,7 @@ export default class Paint {
 
     this.ctx.beginPath()
     this.ctx.lineWidth = lineWidth
-    this.ctx.strokeStyle = 'green'
+    this.ctx.strokeStyle = color
     this.ctx.ellipse(x, y, radiusX, radiusY, 0, 0, Math.PI * 2, false)
     this.ctx.stroke()
     this.ctx.closePath()
@@ -171,6 +176,7 @@ export default class Paint {
     }
   }
 
+  // 填充文本
   fillText(text: string, size: number, x: number, y: number, color: string) {
     if (!this.canvas) return
     if (!this.ctx) return
@@ -193,5 +199,28 @@ export default class Paint {
     }
     this.ctx.restore()
     this.store()
+  }
+
+  // 获取图像
+  get dataURL() {
+    return this.canvas?.toDataURL()
+  }
+
+  // 获取Blob对象
+  toBlob(): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!this.canvas) {
+          reject(new Error('无canvas对象'))
+          return
+        }
+        this.canvas.toBlob((blob) => {
+          if (blob) resolve(blob)
+          else reject(new Error('toBlob返回为' + blob))
+        })
+      } catch (e) {
+        reject(e)
+      }
+    })
   }
 }
