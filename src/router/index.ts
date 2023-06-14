@@ -63,9 +63,9 @@ const router = createRouter({
       component: () => import('@/views/paint/ThePaint.vue')
     },
     {
-      path: '/frame',
-      name: 'frame',
-      component: () => import('@/views/frame/FrameView.vue')
+      path: '/dialog',
+      name: 'dialog',
+      component: () => import('@/views/dialog/DialogView.vue')
     }
   ]
 })
