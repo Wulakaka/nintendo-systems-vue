@@ -201,6 +201,72 @@ export default class Paint {
     this.store()
   }
 
+  // 水平翻转
+  private flipHorizontal() {
+    if (!this.canvas) return
+    if (!this.ctx) return
+    const canvas = this.canvas
+    // 获取imageData
+    const imageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+    // 遍历ImageData的像素数据，将每一行的像素进行水平翻转
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width / 2; x++) {
+        const index1 = (y * canvas.width + x) * 4
+        const index2 = (y * canvas.width + (canvas.width - x - 1)) * 4
+
+        for (let i = 0; i < 4; i++) {
+          const temp = data[index1 + i]
+          data[index1 + i] = data[index2 + i]
+          data[index2 + i] = temp
+        }
+      }
+    }
+
+    // 将翻转后的ImageData绘制回canvas上
+    this.ctx.putImageData(imageData, 0, 0)
+  }
+
+  // 垂直翻转
+  private flipVertical() {
+    if (!this.canvas) return
+    if (!this.ctx) return
+    const canvas = this.canvas
+    // 获取imageData
+    const imageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+    // 遍历 ImageData 的像素数据，并垂直翻转每一列像素
+    for (let x = 0; x < canvas.width; x++) {
+      for (let y = 0; y < canvas.height / 2; y++) {
+        const index1 = (y * canvas.width + x) * 4
+        const index2 = ((canvas.height - y - 1) * canvas.width + x) * 4
+
+        for (let i = 0; i < 4; i++) {
+          const temp = data[index1 + i]
+          data[index1 + i] = data[index2 + i]
+          data[index2 + i] = temp
+        }
+      }
+    }
+
+    // 将翻转后的ImageData绘制回canvas上
+    this.ctx.putImageData(imageData, 0, 0)
+  }
+
+  // 翻转
+  flip(type: 'v' | 'h') {
+    switch (type) {
+      case 'h':
+        this.flipHorizontal()
+        break
+      case 'v':
+        this.flipVertical()
+        break
+      default:
+    }
+    this.store()
+  }
+
   // 获取图像
   get dataURL() {
     return this.canvas?.toDataURL()

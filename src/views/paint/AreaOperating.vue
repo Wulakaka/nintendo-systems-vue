@@ -3,6 +3,7 @@ defineEmits<{
   (e: 'activate', type: 'rect' | 'ellipse' | 'arrow' | 'text'): void
   (e: 'download'): void
   (e: 'confirm'): void
+  (e: 'flip', val: 'v' | 'h'): void
 }>()
 </script>
 
@@ -31,6 +32,18 @@ defineEmits<{
       @click="$emit('activate', 'text')"
     >
       text
+    </button>
+    <button
+      class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"
+      @click="$emit('flip', 'h')"
+    >
+      水平翻转
+    </button>
+    <button
+      class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"
+      @click="$emit('flip', 'v')"
+    >
+      垂直翻转
     </button>
     <button
       class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"

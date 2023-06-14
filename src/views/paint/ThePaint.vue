@@ -23,6 +23,10 @@ function handleDownload() {
 function handleConfirm() {
   drawing.value.copy()
 }
+
+function handleFlip(type: 'v' | 'h') {
+  drawing.value.flip(type)
+}
 </script>
 
 <template>
@@ -32,6 +36,7 @@ function handleConfirm() {
       @activate="handleActivate"
       @download="handleDownload"
       @confirm="handleConfirm"
+      @flip="handleFlip"
     ></AreaOperating>
   </div>
 </template>

@@ -100,11 +100,16 @@ async function copy() {
   await navigator.clipboard.write(data)
 }
 
+function flip(type: 'v' | 'h') {
+  paint.flip(type)
+}
+
 defineExpose({
   loadBg,
   activateDrawing,
   download,
-  copy
+  copy,
+  flip
 })
 </script>
 
