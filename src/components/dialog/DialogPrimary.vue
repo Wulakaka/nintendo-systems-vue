@@ -4,6 +4,7 @@ import DialogPrimaryDecorations from '@/components/dialog/DialogPrimaryDecoratio
 import IconClose from '@/components/dialog/IconClose.vue'
 import useDisplayAnimation from '@/components/dialog/useDisplayAnimation'
 import useFrame from '@/components/dialog/useFrame'
+import useShadow from '@/components/dialog/useShadow'
 
 const props = defineProps<{
   title: string
@@ -20,7 +21,7 @@ const visible = computed({
   },
   set(val: boolean) {
     emit('update:visible', val)
-  },
+  }
 })
 // 用于控制真正的显示隐藏
 const _visible = ref(false)
@@ -29,8 +30,9 @@ watch(visible, (val) => {
   if (val) {
     _visible.value = true
     nextTick(() => {
-      show()
       resizeHandler()
+      show()
+      shadowShow(1000 / 0.7 + 500)
     })
   } else {
     hide().then(() => {
@@ -44,7 +46,7 @@ function close() {
 }
 
 defineExpose({
-  close,
+  close
 })
 
 const panel = ref()
@@ -63,9 +65,15 @@ function resizeHandler() {
   panelHeight.value = el.offsetHeight
 }
 // 边框
-const { viewBox: outerViewBox, borderPath, panelPath } = useFrame(panelLeft, panelTop, panelWidth, panelHeight)
+const {
+  viewBox: outerViewBox,
+  borderPath,
+  panelPath
+} = useFrame(panelLeft, panelTop, panelWidth, panelHeight)
 // 动画
 const { t, dashArray, show, hide, borderEl } = useDisplayAnimation()
+// 白色亮光
+const { offset, opacity, show: shadowShow } = useShadow()
 
 onMounted(() => {
   window.addEventListener('resize', resizeHandler, true)
@@ -87,7 +95,20 @@ onBeforeUnmount(() => {
       <svg :viewBox="outerViewBox" @click.self="close">
         <defs>
           <filter id="dialog-primary-shadow">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="white" flood-opacity="2" />
+            <feDropShadow
+              :dx="offset"
+              :dy="offset"
+              stdDeviation="5"
+              flood-color="white"
+              :flood-opacity="opacity"
+            />
+            <feDropShadow
+              :dx="-offset"
+              :dy="-offset"
+              stdDeviation="5"
+              flood-color="white"
+              :flood-opacity="opacity"
+            />
           </filter>
         </defs>
         <path
@@ -103,7 +124,11 @@ onBeforeUnmount(() => {
       <div
         ref="panel"
         class="dialog-primary__panel"
-        :style="{ clipPath: `path('${panelPath}')`, backdropFilter: `blur(${t * 50}px)`, opacity: t }"
+        :style="{
+          clipPath: `path('${panelPath}')`,
+          backdropFilter: `blur(${t * 50}px)`,
+          opacity: t
+        }"
         @resize="resizeHandler"
       >
         <DialogPrimaryDecorations :width="panelWidth" :height="panelHeight" />

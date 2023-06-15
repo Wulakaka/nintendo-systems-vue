@@ -11,16 +11,20 @@ export default function useDisplayAnimation() {
   })
 
   function show() {
-    t.value = 0
-    render()
-    function render() {
-      const delta = 1 / ((1000 / 16) | 0)
-      t.value += delta
-      t.value = t.value > 1 ? 1 : t.value < 0 ? 0 : t.value
-      if (t.value < 1) {
-        requestAnimationFrame(render)
+    return new Promise((resolve) => {
+      t.value = 0
+      render()
+      function render() {
+        const delta = 1 / ((1000 / 16) | 0)
+        t.value += delta
+        t.value = t.value > 1 ? 1 : t.value < 0 ? 0 : t.value
+        if (t.value < 1) {
+          requestAnimationFrame(render)
+        } else {
+          resolve(void 0)
+        }
       }
-    }
+    })
   }
 
   function hide() {
@@ -45,6 +49,6 @@ export default function useDisplayAnimation() {
     hide,
     t,
     dashArray,
-    borderEl,
+    borderEl
   }
 }
