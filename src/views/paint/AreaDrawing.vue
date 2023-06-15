@@ -114,8 +114,8 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex relative">
-    <canvas ref="canvas"></canvas>
+  <div class="w-[1280px] mt-[20px] relative">
+    <canvas ref="canvas" class="w-full"></canvas>
     <TextCover v-if="isActivateText" @draw-text="handleDrawText"></TextCover>
   </div>
 </template>

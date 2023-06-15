@@ -6,6 +6,7 @@ export default class Paint {
   cover: { x: number; y: number; width: number; height: number } | null = null
   canvas?: HTMLCanvasElement
   ctx?: CanvasRenderingContext2D
+  scale = 1
 
   set el(canvas: HTMLCanvasElement) {
     this.canvas = canvas
@@ -25,6 +26,12 @@ export default class Paint {
 
     this.canvas.width = img.width
     this.canvas.height = img.height
+    // 获取缩放比例
+    this.scale = this.canvas.clientWidth / (this.canvas.width || 1)
+  }
+  // 修正单位
+  private correctUnit(n: number) {
+    return (n / this.scale) | 0
   }
 
   setBackground(img: HTMLImageElement) {
@@ -76,6 +83,13 @@ export default class Paint {
     if (!this.canvas) return
     if (!this.ctx) return
 
+    // 变换比例
+    x = this.correctUnit(x)
+    y = this.correctUnit(y)
+    radiusX = this.correctUnit(radiusX)
+    radiusY = this.correctUnit(radiusY)
+    lineWidth = this.correctUnit(lineWidth)
+
     this.ctx.save()
     this.repairCover()
 
@@ -98,6 +112,13 @@ export default class Paint {
   drawRect(x: number, y: number, width: number, height: number, lineWidth = 4, color = 'red') {
     if (!this.canvas) return
     if (!this.ctx) return
+
+    // 变换比例
+    x = this.correctUnit(x)
+    y = this.correctUnit(y)
+    width = this.correctUnit(width)
+    height = this.correctUnit(height)
+    lineWidth = this.correctUnit(lineWidth)
 
     this.ctx.save()
     this.repairCover()
@@ -122,6 +143,14 @@ export default class Paint {
     if (!this.canvas) return
     if (!this.ctx) return
 
+    // 变换比例
+    startX = this.correctUnit(startX)
+    startY = this.correctUnit(startY)
+    endX = this.correctUnit(endX)
+    endY = this.correctUnit(endY)
+    size = this.correctUnit(size)
+
+    // 角度
     const theta = Math.atan2(endY - startY, endX - startX)
 
     this.ctx.save()
@@ -180,14 +209,19 @@ export default class Paint {
   fillText(text: string, size: number, x: number, y: number, color: string) {
     if (!this.canvas) return
     if (!this.ctx) return
-    this.ctx.save()
 
+    // 变换比例
+    x = this.correctUnit(x)
+    y = this.correctUnit(y)
+    size = this.correctUnit(size)
+
+    this.ctx.save()
     this.ctx.fillStyle = color
     this.ctx.textBaseline = 'top'
     this.ctx.font = `${size}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`
 
     // 手动调整了高度，可能不同的size需要调整的不一样
-    y = y - size / 2 + 1
+    y = y - size / 2 + 2
     this.ctx.fillText(text, x, y)
 
     const t = this.ctx.measureText(text)

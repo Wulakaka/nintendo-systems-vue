@@ -31,7 +31,9 @@ function handleFlip(type: 'v' | 'h') {
 
 <template>
   <div>
-    <AreaDrawing ref="drawing"></AreaDrawing>
+    <div class="flex justify-center">
+      <AreaDrawing ref="drawing"></AreaDrawing>
+    </div>
     <AreaOperating
       @activate="handleActivate"
       @download="handleDownload"
