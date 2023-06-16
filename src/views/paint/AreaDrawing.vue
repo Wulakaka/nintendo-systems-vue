@@ -36,6 +36,9 @@ const revocable = computed({
 
 const canvas = ref()
 const paint = new Paint()
+paint.onStackChange((size) => {
+  revocable.value = size > 1
+})
 const drawEllipse = new DrawEllipse(paint)
 const drawRect = new DrawRect(paint)
 const drawArrow = new DrawArrow(paint)

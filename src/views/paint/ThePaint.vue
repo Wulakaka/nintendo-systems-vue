@@ -6,6 +6,7 @@ import loadImage from '@/views/paint/loadImage'
 import { onMounted, ref } from 'vue'
 
 const drawing = ref()
+const revocable = ref(false)
 
 onMounted(async () => {
   const bg = await loadImage(img)
@@ -27,18 +28,24 @@ function handleConfirm() {
 function handleFlip(type: 'v' | 'h') {
   drawing.value.flip(type)
 }
+
+function handleRevoke() {
+  drawing.value.revoke()
+}
 </script>
 
 <template>
   <div>
     <div class="flex justify-center">
-      <AreaDrawing ref="drawing"></AreaDrawing>
+      <AreaDrawing ref="drawing" v-model:revocable="revocable"></AreaDrawing>
     </div>
     <AreaOperating
       @activate="handleActivate"
       @download="handleDownload"
       @confirm="handleConfirm"
       @flip="handleFlip"
+      @revoke="handleRevoke"
+      :revocable="revocable"
     ></AreaOperating>
   </div>
 </template>

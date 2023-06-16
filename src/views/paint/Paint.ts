@@ -354,7 +354,7 @@ export default class Paint {
     })
   }
 
-  get revocable() {
-    return this.imageDataStack.size > 1
+  onStackChange(fn: (size: number) => void) {
+    this.imageDataStack.onSizeChange(fn)
   }
 }

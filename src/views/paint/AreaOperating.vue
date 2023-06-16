@@ -1,8 +1,13 @@
 <script setup lang="ts">
+defineProps<{
+  revocable: boolean
+}>()
+
 defineEmits<{
   (e: 'activate', type: 'rect' | 'ellipse' | 'arrow' | 'text' | 'cut'): void
   (e: 'download'): void
   (e: 'confirm'): void
+  (e: 'revoke'): void
   (e: 'flip', val: 'v' | 'h'): void
 }>()
 </script>
@@ -50,6 +55,13 @@ defineEmits<{
       @click="$emit('flip', 'v')"
     >
       垂直翻转
+    </button>
+    <button
+      class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring disabled:bg-sky-300"
+      @click="$emit('revoke')"
+      :disabled="!revocable"
+    >
+      撤销
     </button>
     <button
       class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"
