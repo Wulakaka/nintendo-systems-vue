@@ -2,30 +2,35 @@ import Stack from '@/views/paint/Stack'
 
 export default class Paint {
   // 存储操作的栈
-  imageDataStack = new Stack<ImageData>()
-  cover: { x: number; y: number; width: number; height: number } | null = null
-  canvas?: HTMLCanvasElement
-  ctx?: CanvasRenderingContext2D
-  scale = 1
+  private imageDataStack = new Stack<{ width: number; height: number; imageData: ImageData }>()
+  private cover: { x: number; y: number; width: number; height: number } | null = null
+  private canvas?: HTMLCanvasElement
+  private ctx?: CanvasRenderingContext2D
+  private scale = 1
 
   set el(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!
   }
 
-  store() {
+  // 保存状态
+  private store() {
     if (!this.canvas) return
     if (!this.ctx) return
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
-    this.imageDataStack.push(imageData)
+    this.imageDataStack.push({
+      imageData: imageData,
+      width: this.canvas.width,
+      height: this.canvas.height
+    })
   }
 
-  private setSize(img: HTMLImageElement) {
+  private setSize(width: number, height: number) {
     if (!this.canvas) return
     if (!this.ctx) return
 
-    this.canvas.width = img.width
-    this.canvas.height = img.height
+    this.canvas.width = width
+    this.canvas.height = height
     // 获取缩放比例
     this.scale = this.canvas.clientWidth / (this.canvas.width || 1)
   }
@@ -38,18 +43,21 @@ export default class Paint {
     if (!this.canvas) return
     if (!this.ctx) return
 
-    this.setSize(img)
+    this.setSize(img.width, img.height)
     this.ctx.drawImage(img, 0, 0)
     this.store()
   }
 
+  // 撤销
   revoke() {
     if (!this.canvas) return
     if (!this.ctx) return
 
     this.imageDataStack.pop()
-    const imageData = this.imageDataStack.last
-    if (imageData) {
+    const lastData = this.imageDataStack.last
+    if (lastData) {
+      const { imageData, width, height } = lastData
+      this.setSize(width, height)
       this.ctx.putImageData(imageData, 0, 0)
     }
   }
@@ -57,7 +65,7 @@ export default class Paint {
   // 恢复上一次绘制过的图像区域
   private repairCover() {
     if (!this.ctx) return
-    const imgData = this.imageDataStack.last
+    const imgData = this.imageDataStack.last.imageData
     const lastCover = this.cover
     if (imgData && lastCover) {
       this.ctx.putImageData(
@@ -301,6 +309,28 @@ export default class Paint {
     this.store()
   }
 
+  // 裁剪
+  crop(x: number, y: number, width: number, height: number) {
+    x = this.correctUnit(x)
+    y = this.correctUnit(y)
+    width = this.correctUnit(width)
+    height = this.correctUnit(height)
+
+    if (!this.canvas) return
+    if (!this.ctx) return
+    const canvas = this.canvas
+    // 获取imageData
+    const imageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height)
+
+    this.ctx.save()
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // 重设尺寸
+    this.setSize(width, height)
+    this.ctx.putImageData(imageData, -x, -y, x, y, width, height)
+    this.ctx.restore()
+    this.store()
+  }
+
   // 获取图像
   get dataURL() {
     return this.canvas?.toDataURL()
@@ -322,5 +352,9 @@ export default class Paint {
         reject(e)
       }
     })
+  }
+
+  get revocable() {
+    return this.imageDataStack.size > 1
   }
 }

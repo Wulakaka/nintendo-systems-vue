@@ -15,4 +15,8 @@ export default class Stack<T> {
   get last() {
     return this.options[this.options.length - 1]
   }
+
+  get size() {
+    return this.options.length
+  }
 }

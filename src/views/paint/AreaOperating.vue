@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineEmits<{
-  (e: 'activate', type: 'rect' | 'ellipse' | 'arrow' | 'text'): void
+  (e: 'activate', type: 'rect' | 'ellipse' | 'arrow' | 'text' | 'cut'): void
   (e: 'download'): void
   (e: 'confirm'): void
   (e: 'flip', val: 'v' | 'h'): void
@@ -32,6 +32,12 @@ defineEmits<{
       @click="$emit('activate', 'text')"
     >
       text
+    </button>
+    <button
+      class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"
+      @click="$emit('activate', 'cut')"
+    >
+      裁剪
     </button>
     <button
       class="rounded-full bg-sky-500 text-white px-2 active:bg-sky-600 focus:ring-pink-500 ring"

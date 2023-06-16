@@ -12,8 +12,8 @@ onMounted(async () => {
   drawing.value.loadBg(bg)
 })
 
-function handleActivate(type: 'rect' | 'ellipse' | 'arrow' | 'text') {
-  drawing.value.activateDrawing(type)
+function handleActivate(type: 'rect' | 'ellipse' | 'arrow' | 'text' | 'cut') {
+  drawing.value.activate(type)
 }
 
 function handleDownload() {
