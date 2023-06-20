@@ -311,6 +311,7 @@ export default class Paint {
 
   // 裁剪
   crop(x: number, y: number, width: number, height: number) {
+    if (!width || !height) return
     x = this.correctUnit(x)
     y = this.correctUnit(y)
     width = this.correctUnit(width)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Paint from '@/views/paint/Paint'
 import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
@@ -24,6 +24,8 @@ const emit = defineEmits<{
   (e: 'update:revocable', val: boolean): void
 }>()
 
+const currentStateName = ref('')
+
 // 可撤销
 const revocable = computed({
   get() {
@@ -47,9 +49,11 @@ class InactivatedState extends State {
   constructor() {
     super('inactivated')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
+    currentStateName.value = this.name
+  }
+  extract() {
+    currentStateName.value = ''
   }
 }
 
@@ -57,52 +61,59 @@ class IsDrawingRectState extends State {
   constructor() {
     super('isDrawingRect')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
     drawRect.addListeners()
+  }
+  extract() {
+    drawRect.removeListeners()
   }
 }
 class IsDrawingEllipseState extends State {
   constructor() {
     super('isDrawingEllipse')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
     drawEllipse.addListeners()
+  }
+  extract() {
+    drawEllipse.removeListeners()
   }
 }
 class IsDrawingArrowState extends State {
   constructor() {
     super('isDrawingArrow')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
     drawArrow.addListeners()
+  }
+  extract() {
+    drawArrow.removeListeners()
   }
 }
 class IsDrawingTextState extends State {
   constructor() {
     super('isDrawingText')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
+    currentStateName.value = this.name
+  }
+  extract() {
+    currentStateName.value = ''
   }
 }
 class IsCuttingState extends State {
   constructor() {
     super('isCutting')
   }
-
-  handle() {
-    removeAllListeners()
+  inject() {
+    currentStateName.value = this.name
+  }
+  extract() {
+    currentStateName.value = ''
   }
 }
 
-const context = reactive(new Context())
+const context = new Context()
 const inactivatedState = new InactivatedState()
 const isDrawingEllipseState = new IsDrawingEllipseState()
 const isDrawingRectState = new IsDrawingRectState()
@@ -111,7 +122,6 @@ const isDrawingTextState = new IsDrawingTextState()
 const isCuttingState = new IsCuttingState()
 
 context.setState(inactivatedState)
-context.request()
 
 function keydownHandler(e: KeyboardEvent) {
   if (e.key === 'z') {
@@ -130,16 +140,9 @@ onMounted(async () => {
   document.addEventListener('keydown', keydownHandler)
 })
 
-function removeAllListeners() {
-  drawEllipse.removeListeners()
-  drawRect.removeListeners()
-  drawArrow.removeListeners()
-}
-
 onBeforeUnmount(() => {
   // 设置为未激活状态
   context.setState(inactivatedState)
-  context.request()
   // 移除键盘撤销功能
   document.removeEventListener('keydown', keydownHandler)
 })
@@ -180,13 +183,11 @@ function activate(type: 'rect' | 'ellipse' | 'arrow' | 'text' | 'cut' | null) {
     default:
       context.setState(inactivatedState)
   }
-  context.request()
 }
 
 async function download() {
   // 设置未激活状态，为了将文字绘制到图像上
   context.setState(inactivatedState)
-  context.request()
 
   await nextTick()
   const a = document.createElement('a')
@@ -199,7 +200,6 @@ async function download() {
 async function copy() {
   // 设置未激活状态，为了将文字绘制到图像上
   context.setState(inactivatedState)
-  context.request()
 
   await nextTick()
   const blob = await paint.toBlob()
@@ -214,7 +214,6 @@ async function copy() {
 async function flip(type: 'v' | 'h') {
   // 设置未激活状态，为了将文字绘制到图像上
   context.setState(inactivatedState)
-  context.request()
 
   await nextTick()
   paint.flip(type)
@@ -238,8 +237,11 @@ defineExpose({
   <div class="w-[1280px] h-[720px] mt-[20px] flex flex-col justify-center">
     <div class="max-w-full max-h-full relative mx-auto">
       <canvas ref="canvas" class="max-w-full max-h-full"></canvas>
-      <TextCover v-if="context.state === 'isDrawingText'" @draw-text="handleDrawText"></TextCover>
-      <CutCover v-if="context.state === 'isCutting'" @cut="handleCut"></CutCover>
+      <TextCover
+        v-if="currentStateName === 'isDrawingText'"
+        @draw-text="handleDrawText"
+      ></TextCover>
+      <CutCover v-if="currentStateName === 'isCutting'" @cut="handleCut"></CutCover>
     </div>
   </div>
 </template>
