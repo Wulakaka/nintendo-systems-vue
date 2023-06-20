@@ -22,29 +22,50 @@ export default class DrawShape {
 
   private mousedownHandler(e: MouseEvent) {
     if (!this.ele) return
+    if (e.button !== 0) return
     this.startX = e.offsetX
     this.startY = e.offsetY
-    this.ele.addEventListener('mousemove', this.mousemoveHandler)
+    this.addMousemoveListener()
+    this.addMouseupListener()
   }
 
   private mouseupHandler(e: MouseEvent) {
     if (!this.ele) return
+    if (e.button !== 0) return
     this.paint.store()
-    this.ele.removeEventListener('mousemove', this.mousemoveHandler)
+    this.removeMousemoveListener()
+    this.removeMouseupListener()
   }
 
   mousemoveHandler(e: MouseEvent): void {
     throw Error('需要实现 mousemove')
   }
 
+  private addMousemoveListener() {
+    if (!this.ele) return
+    this.ele.addEventListener('mousemove', this.mousemoveHandler)
+  }
+  private removeMousemoveListener() {
+    if (!this.ele) return
+    this.ele.removeEventListener('mousemove', this.mousemoveHandler)
+  }
+  private addMouseupListener() {
+    if (!this.ele) return
+    this.ele.addEventListener('mouseup', this.mouseupHandler)
+    this.ele.addEventListener('mouseleave', this.mouseupHandler)
+  }
+  private removeMouseupListener() {
+    if (!this.ele) return
+    this.ele.removeEventListener('mouseup', this.mouseupHandler)
+    this.ele.removeEventListener('mouseleave', this.mouseupHandler)
+  }
+
   addListeners() {
     if (!this.ele) return
     this.ele.addEventListener('mousedown', this.mousedownHandler)
-    this.ele.addEventListener('mouseup', this.mouseupHandler)
   }
   removeListeners() {
     if (!this.ele) return
     this.ele.removeEventListener('mousedown', this.mousedownHandler)
-    this.ele.removeEventListener('mouseup', this.mouseupHandler)
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue'
 import Paint from '@/views/paint/Paint'
 import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
@@ -10,6 +10,7 @@ import CutCover from '@/views/paint/CutCover.vue'
 import State from '@/views/paint/State'
 import Context from '@/views/paint/Context'
 import type { Rect } from '@/views/paint/types'
+import Box from '@/views/paint/Box'
 
 const props = withDefaults(
   defineProps<{
@@ -44,7 +45,19 @@ paint.onStackChange((size) => {
 const drawEllipse = new DrawEllipse(paint)
 const drawRect = new DrawRect(paint)
 const drawArrow = new DrawArrow(paint)
+const box = new Box()
 
+const scale = ref(1)
+const x = ref(0)
+const y = ref(0)
+
+box.onScaleChange((val) => {
+  scale.value = val
+})
+box.onPositionChange((vX, vY) => {
+  x.value = vX
+  y.value = vY
+})
 class BasicState extends State {
   inject() {
     currentStateName.value = this.name
@@ -53,10 +66,18 @@ class BasicState extends State {
     currentStateName.value = ''
   }
 }
-
+// 失活状态
 class InactivatedState extends BasicState {
   constructor() {
     super('inactivated')
+  }
+  inject() {
+    super.inject()
+    box.addListeners()
+  }
+  extract() {
+    super.extract()
+    box.removeListeners()
   }
 }
 
@@ -65,9 +86,11 @@ class IsDrawingRectState extends BasicState {
     super('isDrawingRect')
   }
   inject() {
+    super.inject()
     drawRect.addListeners()
   }
   extract() {
+    super.extract()
     drawRect.removeListeners()
   }
 }
@@ -76,9 +99,11 @@ class IsDrawingEllipseState extends BasicState {
     super('isDrawingEllipse')
   }
   inject() {
+    super.inject()
     drawEllipse.addListeners()
   }
   extract() {
+    super.extract()
     drawEllipse.removeListeners()
   }
 }
@@ -87,9 +112,11 @@ class IsDrawingArrowState extends BasicState {
     super('isDrawingArrow')
   }
   inject() {
+    super.inject()
     drawArrow.addListeners()
   }
   extract() {
+    super.extract()
     drawArrow.removeListeners()
   }
 }
@@ -112,8 +139,6 @@ const isDrawingArrowState = new IsDrawingArrowState()
 const isDrawingTextState = new IsDrawingTextState()
 const isCuttingState = new IsCuttingState()
 
-context.setState(inactivatedState)
-
 function keydownHandler(e: KeyboardEvent) {
   if (e.key === 'z') {
     paint.revoke()
@@ -126,6 +151,9 @@ onMounted(async () => {
   drawRect.el = ele
   drawEllipse.el = ele
   drawArrow.el = ele
+  box.el = ele
+
+  context.setState(inactivatedState)
 
   // 撤销功能
   document.addEventListener('keydown', keydownHandler)
@@ -225,8 +253,13 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-[1280px] h-[720px] mt-[20px] flex flex-col justify-center">
-    <div class="max-w-full max-h-full relative mx-auto">
+  <div class="w-[1280px] h-[720px] mt-[20px] flex flex-col justify-center overflow-hidden">
+    <div
+      class="max-w-full max-h-full relative mx-auto"
+      :style="{
+        transform: `scale(${scale}) translateX(${x}px) translateY(${y}px)`
+      }"
+    >
       <canvas ref="canvas" class="max-w-full max-h-full"></canvas>
       <TextCover
         v-if="currentStateName === 'isDrawingText'"

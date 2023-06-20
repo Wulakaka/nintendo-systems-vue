@@ -14,7 +14,7 @@ export default class Paint {
   }
 
   // 保存状态
-  private store() {
+  store() {
     if (!this.canvas) return
     if (!this.ctx) return
     const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)

@@ -22,7 +22,8 @@ function handleDownload() {
 }
 
 function handleConfirm() {
-  drawing.value.copy()
+  drawing.value.activate(null)
+  // drawing.value.copy()
 }
 
 function handleFlip(type: 'v' | 'h') {
