@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Paint from '@/views/paint/Paint'
 import DrawEllipse from '@/views/paint/DrawEllipse'
 import DrawRect from '@/views/paint/DrawRect'
@@ -38,6 +38,8 @@ const revocable = computed({
 })
 
 const canvas = ref()
+// 视图区域
+const view = ref()
 const paint = new Paint()
 paint.onStackChange((size) => {
   revocable.value = size > 1
@@ -152,6 +154,7 @@ onMounted(async () => {
   drawEllipse.el = ele
   drawArrow.el = ele
   box.el = ele
+  box.view = view.value
 
   context.setState(inactivatedState)
 
@@ -253,7 +256,10 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-[1280px] h-[720px] mt-[20px] flex flex-col justify-center overflow-hidden">
+  <div
+    class="w-[1280px] h-[720px] mt-[20px] flex flex-col justify-center overflow-hidden"
+    ref="view"
+  >
     <div
       class="max-w-full max-h-full relative mx-auto"
       :style="{

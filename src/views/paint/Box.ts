@@ -2,7 +2,10 @@ import Hook from '@/views/paint/Hook'
 
 export default class Box {
   private ele?: HTMLCanvasElement
+  private _view?: HTMLElement
   scale = 1
+  scaleMax: number
+  scaleMin: number
   startX = 0
   endX = 0
   startY = 0
@@ -13,7 +16,9 @@ export default class Box {
   scaleHook = new Hook<number>()
   moveHook = new Hook<number>()
 
-  constructor() {
+  constructor(scaleMin = 0.75, scaleMax = 4) {
+    this.scaleMin = scaleMin
+    this.scaleMax = scaleMax
     this.wheelHandler = this.wheelHandler.bind(this)
     this.mousedownHandler = this.mousedownHandler.bind(this)
     this.mousemoveHandler = this.mousemoveHandler.bind(this)
@@ -24,6 +29,9 @@ export default class Box {
   set el(ele: HTMLCanvasElement) {
     this.ele = ele
   }
+  set view(ele: HTMLCanvasElement) {
+    this._view = ele
+  }
   // 滚轮事件
   private wheelHandler(e: WheelEvent) {
     if (!this.ele) return
@@ -31,8 +39,11 @@ export default class Box {
     this.scale += e.deltaY * -0.001
 
     // Restrict scale
-    this.scale = Math.min(Math.max(0.5, this.scale), 4)
+    this.scale = Math.min(Math.max(this.scaleMin, this.scale), this.scaleMax)
     this.scaleHook.emit(this.scale)
+
+    this.correctPosition()
+    this.moveHook.emit(this.x, this.y)
   }
 
   private mousedownHandler(e: MouseEvent) {
@@ -67,7 +78,20 @@ export default class Box {
   private changePosition() {
     this.x += (this.endX - this.startX) / this.scale
     this.y += (this.endY - this.startY) / this.scale
+    this.correctPosition()
     this.moveHook.emit(this.x, this.y)
+  }
+
+  // 纠正位置
+  private correctPosition() {
+    if (this._view && this.ele) {
+      const edgeX =
+        Math.abs(this._view.clientWidth - this.ele.clientWidth * this.scale) / 2 / this.scale
+      this.x = Math.min(Math.max(-edgeX, this.x), edgeX)
+      const edgeY =
+        Math.abs(this._view.clientHeight - this.ele.clientHeight * this.scale) / 2 / this.scale
+      this.y = Math.min(Math.max(-edgeY, this.y), edgeY)
+    }
   }
 
   private mouseleaveHandler(e: MouseEvent) {
