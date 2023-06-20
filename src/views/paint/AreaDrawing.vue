@@ -45,10 +45,7 @@ const drawEllipse = new DrawEllipse(paint)
 const drawRect = new DrawRect(paint)
 const drawArrow = new DrawArrow(paint)
 
-class InactivatedState extends State {
-  constructor() {
-    super('inactivated')
-  }
+class BasicState extends State {
   inject() {
     currentStateName.value = this.name
   }
@@ -57,7 +54,13 @@ class InactivatedState extends State {
   }
 }
 
-class IsDrawingRectState extends State {
+class InactivatedState extends BasicState {
+  constructor() {
+    super('inactivated')
+  }
+}
+
+class IsDrawingRectState extends BasicState {
   constructor() {
     super('isDrawingRect')
   }
@@ -68,7 +71,7 @@ class IsDrawingRectState extends State {
     drawRect.removeListeners()
   }
 }
-class IsDrawingEllipseState extends State {
+class IsDrawingEllipseState extends BasicState {
   constructor() {
     super('isDrawingEllipse')
   }
@@ -79,7 +82,7 @@ class IsDrawingEllipseState extends State {
     drawEllipse.removeListeners()
   }
 }
-class IsDrawingArrowState extends State {
+class IsDrawingArrowState extends BasicState {
   constructor() {
     super('isDrawingArrow')
   }
@@ -90,26 +93,14 @@ class IsDrawingArrowState extends State {
     drawArrow.removeListeners()
   }
 }
-class IsDrawingTextState extends State {
+class IsDrawingTextState extends BasicState {
   constructor() {
     super('isDrawingText')
   }
-  inject() {
-    currentStateName.value = this.name
-  }
-  extract() {
-    currentStateName.value = ''
-  }
 }
-class IsCuttingState extends State {
+class IsCuttingState extends BasicState {
   constructor() {
     super('isCutting')
-  }
-  inject() {
-    currentStateName.value = this.name
-  }
-  extract() {
-    currentStateName.value = ''
   }
 }
 
