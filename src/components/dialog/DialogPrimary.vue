@@ -26,20 +26,28 @@ const visible = computed({
 // 用于控制真正的显示隐藏
 const _visible = ref(false)
 const el = ref()
-watch(visible, (val) => {
-  if (val) {
-    _visible.value = true
-    nextTick(() => {
-      resizeHandler()
-      show()
-      shadowShow(1000 / 0.7 + 500)
-    })
-  } else {
-    hide().then(() => {
-      _visible.value = false
-    })
+watch(
+  visible,
+  (val, oldValue) => {
+    if (val) {
+      _visible.value = true
+      nextTick(() => {
+        resizeHandler()
+        show()
+        shadowShow(1000 / 0.7 + 500)
+      })
+    } else {
+      if (oldValue) {
+        hide().then(() => {
+          _visible.value = false
+        })
+      }
+    }
+  },
+  {
+    immediate: true
   }
-})
+)
 
 function close() {
   visible.value = false
