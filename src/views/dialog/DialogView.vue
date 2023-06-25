@@ -21,7 +21,7 @@ function toggleWidth() {
     <button class="appearance-none ring bg-red-200 px-3" @click="visible = true">打开弹框</button>
     <DialogPrimary title="标题" v-model:visible="visible">
       <div
-        class="h-[800px] data-[width='600']:w-[600px] data-[width='800']:w-[800px]"
+        class="h-[800px] data-[width='600']:w-[600px] data-[width='800']:w-[800px] transition-[width]"
         :data-width="width"
       >
         <button
