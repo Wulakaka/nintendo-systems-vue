@@ -35,12 +35,14 @@ watch(
         resizeHandler()
         show()
         shadowShow(1000 / 0.7 + 500)
+        resizeObserver.observe(main.value)
       })
     } else {
       if (oldValue) {
         hide().then(() => {
           _visible.value = false
         })
+        resizeObserver.unobserve(main.value)
       }
     }
   },
@@ -63,6 +65,10 @@ const panelTop = ref(0)
 const panelLeft = ref(0)
 const panelWidth = ref(0)
 const panelHeight = ref(0)
+
+// 根据内容自适应
+const main = ref()
+const resizeObserver = new ResizeObserver(resizeHandler)
 
 function resizeHandler() {
   const el = panel.value
@@ -137,14 +143,13 @@ onBeforeUnmount(() => {
           backdropFilter: `blur(${t * 50}px)`,
           opacity: t
         }"
-        @resize="resizeHandler"
       >
         <DialogPrimaryDecorations :width="panelWidth" :height="panelHeight" />
         <button class="dialog-primary__close-button" type="button" @click="close">
           <IconClose />
         </button>
 
-        <div class="dialog-primary__main">
+        <div class="dialog-primary__main" ref="main">
           <div class="dialog-primary__head">
             <slot name="head">{{ title }}</slot>
           </div>
