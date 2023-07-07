@@ -32,7 +32,11 @@ export default class DrawShape {
   private mouseupHandler(e: MouseEvent) {
     if (!this.ele) return
     if (e.button !== 0) return
-    this.paint.store()
+    this.endX = e.offsetX
+    this.endY = e.offsetY
+    if (this.startX !== this.endX && this.startY !== this.endY) {
+      this.paint.store()
+    }
     this.removeMousemoveListener()
     this.removeMouseupListener()
   }
