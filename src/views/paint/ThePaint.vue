@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import AreaDrawing from '@/views/paint/AreaDrawing.vue'
 import AreaOperating from '@/views/paint/AreaOperating.vue'
-import img from '@/assets/spiderman.jpg'
-import loadImage from '@/views/paint/loadImage'
 import { onMounted, ref } from 'vue'
 
 const drawing = ref()
 const revocable = ref(false)
+const video = ref()
 
-onMounted(async () => {
-  const bg = await loadImage(img)
-  drawing.value.loadBg(bg)
+onMounted(() => {
+  video.value.addEventListener('loadeddata', () => {
+    setTimeout(() => {
+      drawing.value.loadBg(video.value)
+    }, 1000)
+  })
 })
 
 function handleActivate(type: 'rect' | 'ellipse' | 'arrow' | 'text' | 'cut') {
@@ -48,6 +50,11 @@ function handleRevoke() {
       @revoke="handleRevoke"
       :revocable="revocable"
     ></AreaOperating>
+    <video
+      ref="video"
+      crossorigin="anonymous"
+      src="https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4"
+    ></video>
   </div>
 </template>
 

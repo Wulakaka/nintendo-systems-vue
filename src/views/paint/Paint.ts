@@ -39,12 +39,17 @@ export default class Paint {
     return (n / this.scale) | 0
   }
 
-  setBackground(img: HTMLImageElement) {
+  // 设置背景图
+  setBackground(el: HTMLImageElement | HTMLVideoElement) {
     if (!this.canvas) return
     if (!this.ctx) return
 
-    this.setSize(img.width, img.height)
-    this.ctx.drawImage(img, 0, 0)
+    if (el instanceof HTMLVideoElement) {
+      this.setSize(el.videoWidth, el.videoHeight)
+    } else {
+      this.setSize(el.width, el.height)
+    }
+    this.ctx.drawImage(el, 0, 0)
     this.store()
   }
 
