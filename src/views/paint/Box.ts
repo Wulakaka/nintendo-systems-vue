@@ -34,6 +34,7 @@ export default class Box {
   }
   // 滚轮事件
   private wheelHandler(e: WheelEvent) {
+    e.preventDefault()
     if (!this.ele) return
 
     this.scale += e.deltaY * -0.001
@@ -130,7 +131,7 @@ export default class Box {
 
   addListeners() {
     if (!this.ele) return
-    this.ele.addEventListener('wheel', this.wheelHandler, { passive: true })
+    this.ele.addEventListener('wheel', this.wheelHandler)
     this.ele.addEventListener('mousedown', this.mousedownHandler)
   }
 
