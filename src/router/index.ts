@@ -7,7 +7,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: MainView
+      component: MainView,
+      redirect: '/navigation2'
     },
     {
       path: '/tailwind',
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/navigation',
       name: 'navigation',
       component: () => import('../views/navigation/TheNavigation.vue')
+    },
+    {
+      path: '/navigation2',
+      name: 'navigation2',
+      component: () => import('../views/navigation2/index.vue')
     },
     {
       path: '/bubble',
