@@ -8,7 +8,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: MainView,
-      redirect: '/navigation2'
+      redirect: '/d3/hierarchies'
     },
     {
       path: '/tailwind',
@@ -72,6 +72,23 @@ const router = createRouter({
       path: '/dialog',
       name: 'dialog',
       component: () => import('@/views/dialog/DialogView.vue')
+    },
+    {
+      path: '/d3',
+      name: 'd3',
+      component: () => import('@/views/d3/index.vue'),
+      children: [
+        {
+          path: 'axis',
+          name: 'D3Axis',
+          component: () => import('@/views/d3/axis.vue')
+        },
+        {
+          path: 'hierarchies',
+          name: 'D3Hierarchies',
+          component: () => import('@/views/d3/hierarchies.vue')
+        }
+      ]
     }
   ]
 })
