@@ -8,7 +8,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: MainView,
-      redirect: '/d3/hierarchies'
+      redirect: '/swiper'
     },
     {
       path: '/tailwind',
@@ -72,6 +72,11 @@ const router = createRouter({
       path: '/dialog',
       name: 'dialog',
       component: () => import('@/views/dialog/DialogView.vue')
+    },
+    {
+      path: '/swiper',
+      name: 'swiper',
+      component: () => import('@/views/swiper/SwiperView.vue')
     },
     {
       path: '/d3',
